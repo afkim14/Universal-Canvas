@@ -1,0 +1,7 @@
+[package]
+name = "finalproject"
+version = "0.1.0"
+authors = ["Andres Kim <andreskim2018@u.northwestern.edu>"]
+
+[dependencies]
+gtk = { version = "^0.3.0", features = ["v3_22"] }
