@@ -1,0 +1,14 @@
+[[package]]
+name = "canvas_finalproject"
+version = "0.1.0"
+dependencies = [
+ "rgb 0.8.9 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "rgb"
+version = "0.8.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[metadata]
+"checksum rgb 0.8.9 (registry+https://github.com/rust-lang/crates.io-index)" = "fbdb7a50c1da12637ca38b5babdc89964456fb34444de93240b6c9809e7cd5a0"
