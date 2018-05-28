@@ -16,8 +16,7 @@ fn main() {
     //     println!("new client\n");
     //     let stream = stream.unwrap();
     // }
-    let mut server = WSServer::new(Canvas::new(125, 125));
-    server.listen();
+    WSServer::listen();
 }
 
 fn send_canvas_to_clients(canvas: &Canvas) {
