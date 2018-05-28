@@ -22,9 +22,22 @@ function setup() {
 	canvas = createCanvas(constrainedCanvasWidth, constrainedCanvasHeight);
 	canvas.parent('canvas');
 	background(Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256));
-  create_canvas();
+    create_canvas();
 
-  var socket = io('ws://127.0.0.1:8080', {transports: ['websocket', 'polling', 'flashsocket']});
+    var socket = new WebSocket("ws://127.0.0.1:8080");
+    setTimeout(
+            function () {
+                if (socket.readyState === 1) {
+                    console.log("Connection is made")
+                    socket.send("ayyyy");
+                    return;
+
+                } else {
+                    console.log("wait for connection...")
+                    waitForSocketConnection(socket, callback);
+                }
+
+            }, 5);
 }
 
 function draw() {
