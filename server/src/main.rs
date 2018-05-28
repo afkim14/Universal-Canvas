@@ -19,10 +19,10 @@ fn main() {
     WSServer::listen();
 }
 
-fn send_canvas_to_clients(canvas: &Canvas) {
-    unimplemented!();
-}
+// fn send_canvas_to_clients(canvas: &Canvas) {
+//     unimplemented!();
+// }
 
-fn update_canvas(pixels: &Vec<Pixel>) {
-    unimplemented!();
-}
+// fn update_canvas(pixels: &Vec<Pixel>) {
+//     unimplemented!();
+// }

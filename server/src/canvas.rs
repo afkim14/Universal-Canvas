@@ -24,6 +24,10 @@ impl Pixel {
     pub fn from_json(json: JsonValue) -> Self {
         unimplemented!();
     }
+
+    pub fn stringify(&self) -> String {
+        unimplemented!()
+    }
 }
 
 pub struct Canvas {
@@ -55,7 +59,7 @@ impl Canvas {
         unimplemented!();
     }
 
-    pub fn serialize(&self) -> String {
+    pub fn stringify(&self) -> String {
         unimplemented!();
     }
 }
