@@ -1,5 +1,7 @@
 extern crate rgb;
 use self::rgb::*;
+extern crate json;
+use self::json::*;
 
 pub struct Pixel {
     pub id : usize, // id or position
@@ -17,6 +19,10 @@ impl Pixel {
     }
     pub fn change_color(&mut self, newcolor: RGB8) {
         self.color = newcolor;
+    }
+
+    pub fn from_json(json: JsonValue) -> Self {
+        unimplemented!();
     }
 }
 
@@ -38,7 +44,7 @@ impl Canvas {
         // Build canvas from saved file
         unimplemented!();
     }
-    pub fn update_board() {
+    pub fn update_pixel(pixel: Pixel) {
         // Given a new pixel update, update the canvas
         unimplemented!();
     }
