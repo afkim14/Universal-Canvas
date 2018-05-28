@@ -22,7 +22,10 @@ function setup() {
 	canvas = createCanvas(constrainedCanvasWidth, constrainedCanvasHeight);
 	canvas.parent('canvas');
 	background(Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256));
-    create_canvas();
+  create_canvas();
+
+  var exampleSocket = new WebSocket("ws://127.0.0.1:8080", ["protocolOne", "protocolTwo"]);
+  exampleSocket.send("Here's some text that the server is urgently awaiting!");
 }
 
 function draw() {
@@ -46,12 +49,12 @@ function create_canvas() {
 }
 
 function draw_canvas() {
-    for (var i = 0; i < pixels.length; i++)  { 
+    for (var i = 0; i < pixels.length; i++)  {
         push();
         noStroke();
         fill(pixels[i].color.r, pixels[i].color.g, pixels[i].color.b);
         rect(pixels[i].x, pixels[i].y, pixels[i].size, pixels[i].size);
-        pop();           
+        pop();
     }
 }
 
@@ -81,7 +84,7 @@ function keyPressed() {
         currentCursorPos.y += pixelSize;
         currentPixelIndex += constrainedCanvasWidth / pixelSize;
     }
-    
+
     // Spacebar
     if (keyCode == 32) {
         // just to show that you can get the current pixel
