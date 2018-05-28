@@ -24,7 +24,7 @@ pub struct Canvas {
 impl Canvas {
     pub fn new() -> Self {
         // Default Constructor
-        unimplemented!();
+        Canvas { pixels: vec![] }
     }
     pub fn new_from_file() -> Self {
         // Build canvas from saved file
