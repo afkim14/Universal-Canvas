@@ -6,3 +6,4 @@ authors = ["Andres Kim <andreskim2018@u.northwestern.edu>"]
 [dependencies]
 rgb = "0.8"
 ws = "*"
+json = "*"

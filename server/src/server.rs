@@ -1,8 +1,8 @@
 extern crate ws;
 
 use canvas::*;
-use self::ws::{listen, Message};
-use std::result::Result;
+use self::ws::{listen, Message, Handler, Result, Sender};
+// use std::result::Result;
 
 pub struct WSServer {
     canvas: Canvas,
@@ -20,7 +20,7 @@ impl WSServer {
                 // self.handle_message(msg);
                 println!("{:?}", msg);
                 out.send(msg);
-                Result::Ok(())
+                Ok(())
             }
         }).unwrap();
     }
@@ -42,3 +42,7 @@ impl WSServer {
         unimplemented!();
     }
 }
+
+// impl Handler for Server {
+//     fn on_message(&mut self, msg:)
+// }

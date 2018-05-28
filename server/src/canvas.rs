@@ -4,13 +4,16 @@ use self::rgb::*;
 pub struct Pixel {
     pub id : usize, // id or position
     pub color : RGB8,
-    pub author : String, // if we want to keep track of who modified the pixel
+    // pub author : String, // if we want to keep track of who modified the pixel
 }
 
 impl Pixel {
-    pub fn new() -> Self {
+    pub fn new(id: usize) -> Self {
         // Default Constructor
-        unimplemented!();
+        Pixel {
+            id,
+            color: RGB8::new(0, 0, 0),
+        }
     }
     pub fn change_color(&mut self, newcolor: RGB8) {
         self.color = newcolor;
@@ -22,9 +25,14 @@ pub struct Canvas {
 }
 
 impl Canvas {
-    pub fn new() -> Self {
+    pub fn new(width: usize, height: usize) -> Self {
         // Default Constructor
-        Canvas { pixels: vec![] }
+        // Canvas { pixels: vec![] }
+        let mut pixels = vec![];
+        for id in 0..width * height {
+            pixels.push(Pixel::new(id));
+        }
+        Canvas { pixels }
     }
     pub fn new_from_file() -> Self {
         // Build canvas from saved file
@@ -38,6 +46,10 @@ impl Canvas {
     #[allow(dead_code)]
     pub fn show_board() {
         // Print canvas just for testing purposes
+        unimplemented!();
+    }
+
+    pub fn serialize(&self) -> String {
         unimplemented!();
     }
 }
