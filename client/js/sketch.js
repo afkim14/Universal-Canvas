@@ -24,8 +24,7 @@ function setup() {
 	background(Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256));
   create_canvas();
 
-  var exampleSocket = new WebSocket("ws://127.0.0.1:8080", ["protocolOne", "protocolTwo"]);
-  exampleSocket.send("Here's some text that the server is urgently awaiting!");
+  var socket = io('ws://127.0.0.1:8080', {transports: ['websocket', 'polling', 'flashsocket']});
 }
 
 function draw() {

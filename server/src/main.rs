@@ -3,6 +3,8 @@ use std::net::{TcpListener};
 // User Modules
 mod canvas;
 use canvas::*;
+mod server;
+use server::*;
 
 extern crate ws;
 
@@ -14,12 +16,8 @@ fn main() {
     //     println!("new client\n");
     //     let stream = stream.unwrap();
     // }
-
-    listen("127.0.0.1:3012", |out| {
-      move |msg| {
-         out.send(msg)
-      }
-  }).unwrap()
+    let mut server = WSServer::new(Canvas::new());
+    server.listen();
 }
 
 fn send_canvas_to_clients(canvas: &Canvas) {
