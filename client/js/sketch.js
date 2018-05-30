@@ -69,7 +69,7 @@ function create_canvas(json_pixels) {
     var currIndex = 0;
     for (var i = 0; i < CONSTRAINED_CANVAS_WIDTH / PIXEL_SIZE; i++) {
         for (var j = 0; j < CONSTRAINED_CANVAS_HEIGHT / PIXEL_SIZE; j++) {
-            var parsed_json_pixel = JSON.parse(json_pixels[currIndex]);
+            var parsed_json_pixel = json_pixels[currIndex]; // JSON.parse(json_pixels[currIndex]);
             var color = {
                 r : parsed_json_pixel["r"],
                 g : parsed_json_pixel["g"],
