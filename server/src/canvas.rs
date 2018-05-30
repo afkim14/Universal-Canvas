@@ -5,6 +5,7 @@ use self::json::*;
 extern crate rand;
 use self::rand::*;
 
+#[derive(Debug)]
 pub struct Pixel {
     pub id : usize, // id or position
     pub color : RGB8,
@@ -12,11 +13,11 @@ pub struct Pixel {
 }
 
 impl Pixel {
-    pub fn new(id: usize, r: u8, g: u8, b: u8) -> Self {
+    pub fn new(id: usize) -> Self {
         // Default Constructor
         Pixel {
             id,
-            color: RGB8::new(r, g, b) // for some reason can't put r g b here
+            color: RGB8::new(0, 0, 0), // default color as black
         }
     }
     pub fn change_color(&mut self, newcolor: RGB8) {
@@ -28,17 +29,17 @@ impl Pixel {
     }
 
     pub fn stringify(&self) -> String {
-        let data = object! {
+        let json_text = object!{
             "id" => self.id,
-            "r" => self.color.r as usize,
-            "g" => self.color.g as usize,
-            "b" => self.color.b as usize
+            "r"  => self.color.r,
+            "g"  => self.color.g,
+            "b"  => self.color.b
         };
-
-        data.dump()
+        json_text.dump()
     }
 }
 
+#[derive(Debug)]
 pub struct Canvas {
     pub width: usize,
     pub height: usize,
@@ -54,10 +55,7 @@ impl Canvas {
         // Default Constructor
         let mut pixels = vec![];
         for id in 0..width * height {
-            // let r = thread_rng().gen_range(0, 200);
-            // let g = thread_rng().gen_range(0, 200);
-            // let b = thread_rng().gen_range(0, 200);
-            pixels.push(Pixel::new(id, 0, 0, 0));
+            pixels.push(Pixel::new(id));
         }
         Canvas { width, height, pixel_size, pixels }
     }
@@ -83,7 +81,7 @@ impl Canvas {
             pixels_json.push(p.stringify());
         }
 
-        let data = object! {
+        let json_text = object! {
             "Title" => REPLY_ENTIRE_BOARD,
             "Width" => self.width,
             "Height" => self.height,
@@ -91,6 +89,41 @@ impl Canvas {
             "Pixels" => pixels_json
         };
 
-        data.dump()
+        json_text.dump()
     }
+}
+
+
+#[cfg(test)]
+mod test_pixel {
+    use super::*;
+
+    #[test]
+    fn test_change_color() {
+        let mut pixel = Pixel::new(5);
+        pixel.change_color(RGB8::new(5, 6, 7));
+        assert_eq!(pixel.id, 5);
+        assert_eq!((pixel.color.r, pixel.color.g, pixel.color.b), (5, 6, 7));
+    }
+
+    #[test]
+    fn test_stringify_0() {
+        let pixel = Pixel::new(1);
+        let expected = r#"{"id":1,"r":0,"g":0,"b":0}"#;
+        assert_eq!(pixel.stringify(), expected);
+    }
+
+    #[test]
+    fn test_stringify_1() {
+        let mut pixel = Pixel::new(5);
+        pixel.change_color(RGB8::new(5, 6, 7));
+        let expected = r#"{"id":5,"r":5,"g":6,"b":7}"#;
+        assert_eq!(pixel.stringify(), expected);
+    }
+
+    #[test]
+    fn test_from_json() {
+        unimplemented!();
+    }
+
 }
