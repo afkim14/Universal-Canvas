@@ -53,18 +53,17 @@ const RETRIEVE_BOARD :&str = "RETRIEVE_BOARD";
 
 impl Handler for WSServer {
     fn on_message(&mut self, msg: Message) -> Result<()> {
-        // just to test client side interaction
-        // can remove on merge
         if let Ok(msg_str) = msg.as_text() {
             println!("received request: {}", msg_str);
-            if (msg_str == RETRIEVE_BOARD) { // let's make this a const
-                match self.out.send(Message::Text(self.canvas.stringify())) {
-                    Ok(_) => println!("message sent"),
-                    Err(e) => println!("message send failed")
-                }
+            match msg_str {
+                RETRIEVE_BOARD => {
+                    let canvas_text = self.canvas.stringify();
+                    return self.out.send(Message::Text(canvas_text));
+                },
+                _ => {},
             }
         }
+        // TODO
         Ok(())
-        //unimplemented!()
     }
 }
