@@ -30,9 +30,9 @@ impl Pixel {
     pub fn stringify(&self) -> String {
         let data = object! {
             "id" => self.id,
-            "r" => self.color.r as usize,
-            "g" => self.color.g as usize,
-            "b" => self.color.b as usize
+            "r" => self.color.r,
+            "g" => self.color.g,
+            "b" => self.color.b
         };
 
         data.dump()
