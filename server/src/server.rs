@@ -57,7 +57,7 @@ impl Handler for WSServer {
         // can remove on merge
         if let Ok(msg_str) = msg.as_text() {
             println!("received request: {}", msg_str);
-            if (msg_str == RETRIEVE_BOARD) { // let's make this a const
+            if msg_str == RETRIEVE_BOARD { // let's make this a const
                 match self.out.send(Message::Text(self.canvas.stringify())) {
                     Ok(_) => println!("message sent"),
                     Err(e) => println!("message send failed")

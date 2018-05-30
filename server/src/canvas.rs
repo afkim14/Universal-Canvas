@@ -36,15 +36,14 @@ impl Pixel {
             || g.is_null() 
             || b.is_null() {
             return Err("Invalid JSON Pixel, field missing: ".to_owned() + &json.dump());
-        } else {
-            // let (rr, gg, bb, idid) : (u8, u8, u8, usize);
-            match (r.as_u8(), g.as_u8(), b.as_u8(), id.as_usize()) {
-                (Some(rr), Some(gg), Some(bb), Some(idid)) => {
-                    let mut p = Pixel::new(idid);
-                    p.change_color(RGB8::new(rr, gg, bb));
-                    Ok(p)
-                }
-                _ => Err("Invalid JSON Pixel, type missmatch:".to_owned() + &json.dump())
+        } 
+        else {
+            if let (Some(rr), Some(gg), Some(bb), Some(idid)) = (r.as_u8(), g.as_u8(), b.as_u8(), id.as_usize()) {
+                let mut p = Pixel::new(idid);
+                p.change_color(RGB8::new(rr, gg, bb));
+                Ok(p)
+            } else {
+                Err("Invalid JSON Pixel, type missmatch:".to_owned() + &json.dump())
             }
         }
     }
@@ -67,8 +66,8 @@ impl Pixel {
 pub struct Canvas {
     pub width: usize,
     pub height: usize,
-    pub pixel_size: usize,
-    pub pixels : Vec<Pixel> // 2D Vec? Hashmap<pixid, pixel>?
+    pub pixel_size: usize,  // size of a pixel when get drawn on client side
+    pub pixels : Vec<Pixel> // emulated 2D vector
 }
 
 // REPLY CONSTANTS
@@ -185,7 +184,7 @@ mod test_canvas {
 
     #[test]
     fn test_canvas_stringify() {
-        let expected = r#"{"width":2,"height":2,"pixels":[{"id":0,"r":0,"g":0,"b":0},{"id":1,"r":0,"g":0,"b":0},{"id":2,"r":0,"g":0,"b":0},{"id":3,"r":0,"g":0,"b":0}]}"#;
+        let expected = r#"{"Title":"REPLY_ENTIRE_BOARD","Width":2,"Height":2,"PixelSize":4,"Pixels":[{"id":0,"r":0,"g":0,"b":0},{"id":1,"r":0,"g":0,"b":0},{"id":2,"r":0,"g":0,"b":0},{"id":3,"r":0,"g":0,"b":0}]}"#;
         let canvas = Canvas::new(2, 2, 4);
         assert_eq!(canvas.stringify(), expected);
 
