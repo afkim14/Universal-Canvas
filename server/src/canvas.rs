@@ -24,8 +24,23 @@ impl Pixel {
         self.color = newcolor;
     }
 
-    pub fn from_json(json: JsonValue) -> Self {
-        unimplemented!();
+    pub fn from_json(json: &JsonValue) -> Option<Self> {
+        // TODO: inconsistent pixel representation on client
+        let id = json["id"].as_usize();
+        let color = &json["color"];
+        if id.is_none() || !color.is_object() {
+            return None;
+        }
+        let r = color["r"].as_u8();
+        let g = color["g"].as_u8();
+        let b = color["b"].as_u8();
+        if r.is_none() || g.is_none() || b.is_none() {
+            return None;
+        }
+        Some(Pixel {
+            id: id.unwrap(),
+            color: RGB8::new(r.unwrap(), g.unwrap(), b.unwrap()),
+        })
     }
 
     pub fn stringify(&self) -> String {
@@ -63,7 +78,7 @@ impl Canvas {
         // Build canvas from saved file
         unimplemented!();
     }
-    pub fn update_pixel(pixel: Pixel) {
+    pub fn update_pixel(&mut self, pixel: Pixel) {
         // Given a new pixel update, update the canvas
         unimplemented!();
     }

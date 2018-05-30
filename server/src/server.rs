@@ -1,4 +1,5 @@
 extern crate ws;
+extern crate json;
 
 use canvas::*;
 use self::ws::{listen, Message, Handler, Result, Sender};
@@ -50,6 +51,7 @@ impl WSServer {
 
 // REQUEST CONSTANTS
 const RETRIEVE_BOARD :&str = "RETRIEVE_BOARD";
+const PIXEL_CHANGED: &str = "pixel_changed";
 
 impl Handler for WSServer {
     fn on_message(&mut self, msg: Message) -> Result<()> {
@@ -60,7 +62,19 @@ impl Handler for WSServer {
                     let canvas_text = self.canvas.stringify();
                     return self.out.send(Message::Text(canvas_text));
                 },
-                _ => {},
+                _ => {
+                    // TODO: turn RETRIEVE BOARD into a json request so our parsing is consistent
+                    // TODO: this is hell nesting. switch to convenience methods later
+                    if let Ok(json_data) = json::parse(msg_str) {
+                        let new_pixel_json = &json_data[PIXEL_CHANGED];
+                        if new_pixel_json.is_object() {
+                            let new_pixel_opt = Pixel::from_json(new_pixel_json);
+                            if let Some(new_pixel) = new_pixel_opt {
+                                self.canvas.update_pixel(new_pixel);
+                            }
+                        }
+                    }
+                },
             }
         }
         // TODO

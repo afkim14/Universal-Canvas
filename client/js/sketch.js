@@ -10,6 +10,9 @@ var CONSTRAINED_CANVAS_HEIGHT = 0;
 
 const RETRIEVE_BOARD = "RETRIEVE_BOARD"
 const REPLY_ENTIRE_BOARD = "REPLY_ENTIRE_BOARD";
+const PIXEL_CHANGED = "pixel_changed"; // we're going to have to fix the spec for requests from client to server
+
+var socket = new WebSocket("ws://127.0.0.1:8080");
 
 class Pixel {
     constructor(id, x, y, size, color) {
@@ -27,7 +30,6 @@ function setup() {
 }
 
 function handle_socket_connection() {
-  var socket = new WebSocket("ws://127.0.0.1:8080");
   setTimeout(
           function () {
               if (socket.readyState === 1) {
@@ -103,6 +105,7 @@ function show_current_cursor() {
     pop();
 }
 
+// rip indentation???
 function keyPressed() {
 	if (keyCode == 39 && currentCursorPos.x < CONSTRAINED_CANVAS_WIDTH) {
          currentCursorPos.x += PIXEL_SIZE;
@@ -125,5 +128,10 @@ function keyPressed() {
     if (keyCode == 32) {
         // just to show that you can get the current pixel
         console.log(pixels[currentPixelIndex].color);
+        // set it to white for now
+        pixels[currentPixelIndex].color = { r: 255, g: 255, b: 255 };
+        socket.send(JSON.stringify({
+            pixel_changed: pixels[currentPixelIndex]
+        }));
     }
 }
