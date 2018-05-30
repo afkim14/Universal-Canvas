@@ -1,15 +1,19 @@
 
 // Bunch of globals
 var canvas;
-var constrainedCanvasWidth = 1250;
-var constrainedCanvasHeight = 650;
-var pixelSize = 10;
 var pixels = []; // instead of an array, maybe we want to have some sort of hash? So that we can change individual pixels in O(1)
 var currentCursorPos = { x: 0, y: 0 };
 var currentPixelIndex = 0;
+var PIXEL_SIZE = 0;
+var CONSTRAINED_CANVAS_WIDTH = 0;
+var CONSTRAINED_CANVAS_HEIGHT = 0;
+
+const RETRIEVE_BOARD = "RETRIEVE_BOARD"
+const REPLY_ENTIRE_BOARD = "REPLY_ENTIRE_BOARD";
 
 class Pixel {
-    constructor(x, y, size, color) {
+    constructor(id, x, y, size, color) {
+        this.id = id;
         this.x = x;
         this.y = y;
         this.size = size;
@@ -19,25 +23,34 @@ class Pixel {
 
 
 function setup() {
-	canvas = createCanvas(constrainedCanvasWidth, constrainedCanvasHeight);
-	canvas.parent('canvas');
-	background(Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256));
-    create_canvas();
+    handle_socket_connection();
+}
 
-    var socket = new WebSocket("ws://127.0.0.1:8080");
-    setTimeout(
-            function () {
-                if (socket.readyState === 1) {
-                    console.log("Connection is made")
-                    socket.send("ayyyy");
-                    return;
+function handle_socket_connection() {
+  var socket = new WebSocket("ws://127.0.0.1:8080");
+  setTimeout(
+          function () {
+              if (socket.readyState === 1) {
+                  console.log("Connection is made")
+                  socket.send(RETRIEVE_BOARD);
+                  return;
+              } else {
+                  console.log("wait for connection...")
+                  waitForSocketConnection(socket, callback);
+              }
+          }, 5);
 
-                } else {
-                    console.log("wait for connection...")
-                    waitForSocketConnection(socket, callback);
-                }
-
-            }, 5);
+  // message handlers
+  socket.onmessage = function (event) {
+    var msg = JSON.parse(event.data);
+    if (msg["Title"] == REPLY_ENTIRE_BOARD) {
+        PIXEL_SIZE = msg["PixelSize"];
+        CONSTRAINED_CANVAS_WIDTH = msg["Width"] * PIXEL_SIZE;
+        CONSTRAINED_CANVAS_HEIGHT = msg["Height"] * PIXEL_SIZE;
+        create_canvas(msg["Pixels"]);
+    }
+    // else if (msg["Title"] == .......)
+  }
 }
 
 function draw() {
@@ -46,16 +59,27 @@ function draw() {
     show_current_cursor();
 }
 
-function create_canvas() {
-    // right now i'm just creating it with random values, but we should get the values from the server
-    for (var i = 0; i < constrainedCanvasWidth / pixelSize; i++) {
-        for (var j = 0; j < constrainedCanvasHeight / pixelSize; j++) {
+function create_canvas(json_pixels) {
+    canvas = createCanvas(CONSTRAINED_CANVAS_WIDTH, CONSTRAINED_CANVAS_HEIGHT);
+    canvas.parent('canvas');
+    background(255);
+
+    var currIndex = 0;
+    for (var i = 0; i < CONSTRAINED_CANVAS_WIDTH / PIXEL_SIZE; i++) {
+        for (var j = 0; j < CONSTRAINED_CANVAS_HEIGHT / PIXEL_SIZE; j++) {
+            var parsed_json_pixel = JSON.parse(json_pixels[currIndex]);
             var color = {
-                r : Math.floor(Math.random() * 256),
-                g : Math.floor(Math.random() * 256),
-                b : Math.floor(Math.random() * 256)
+                r : parsed_json_pixel["r"],
+                g : parsed_json_pixel["g"],
+                b : parsed_json_pixel["b"]
             };
-            pixels.push(new Pixel(i*pixelSize, j*pixelSize, pixelSize, color));
+            pixels.push(new Pixel(parsed_json_pixel["id"],
+                                  i*PIXEL_SIZE,
+                                  j*PIXEL_SIZE,
+                                  PIXEL_SIZE,
+                                  color
+                                ));
+            currIndex++;
         }
     }
 }
@@ -75,26 +99,26 @@ function show_current_cursor() {
     stroke(0);
     strokeWeight(4);
     fill(0, 0, 0, 0);
-    rect(currentCursorPos.x, currentCursorPos.y, pixelSize, pixelSize);
+    rect(currentCursorPos.x, currentCursorPos.y, PIXEL_SIZE, PIXEL_SIZE);
     pop();
 }
 
 function keyPressed() {
-	if (keyCode == 39 && currentCursorPos.x < constrainedCanvasWidth) {
-         currentCursorPos.x += pixelSize;
+	if (keyCode == 39 && currentCursorPos.x < CONSTRAINED_CANVAS_WIDTH) {
+         currentCursorPos.x += PIXEL_SIZE;
          currentPixelIndex++;
     }
     if (keyCode == 37 && currentCursorPos.x > 0) {
-         currentCursorPos.x -= pixelSize;
+         currentCursorPos.x -= PIXEL_SIZE;
          currentPixelIndex--;
     }
 	if (keyCode == 38 && currentCursorPos.y > 0) {
-         currentCursorPos.y -= pixelSize;
-         currentPixelIndex -= constrainedCanvasWidth / pixelSize;
+         currentCursorPos.y -= PIXEL_SIZE;
+         currentPixelIndex -= CONSTRAINED_CANVAS_WIDTH / PIXEL_SIZE;
     }
-    if (keyCode == 40 && currentCursorPos.y < constrainedCanvasHeight) {
-        currentCursorPos.y += pixelSize;
-        currentPixelIndex += constrainedCanvasWidth / pixelSize;
+    if (keyCode == 40 && currentCursorPos.y < CONSTRAINED_CANVAS_HEIGHT) {
+        currentCursorPos.y += PIXEL_SIZE;
+        currentPixelIndex += CONSTRAINED_CANVAS_WIDTH / PIXEL_SIZE;
     }
 
     // Spacebar

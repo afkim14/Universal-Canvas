@@ -24,7 +24,7 @@ impl WSServer {
             //     Ok(())
             // }
             WSServer {
-                canvas: Canvas::new(125, 125),
+                canvas: Canvas::new(125, 125, 10),
                 out,
             }
         }).unwrap();
@@ -48,9 +48,23 @@ impl WSServer {
     }
 }
 
+// REQUEST CONSTANTS
+const RETRIEVE_BOARD :&str = "RETRIEVE_BOARD";
+
 impl Handler for WSServer {
     fn on_message(&mut self, msg: Message) -> Result<()> {
-        println!("{:?}", msg);
-        unimplemented!()
+        // just to test client side interaction
+        // can remove on merge
+        if let Ok(msg_str) = msg.as_text() {
+            println!("received request: {}", msg_str);
+            if (msg_str == RETRIEVE_BOARD) { // let's make this a const
+                match self.out.send(Message::Text(self.canvas.stringify())) {
+                    Ok(_) => println!("message sent"),
+                    Err(e) => println!("message send failed")
+                }
+            }
+        }
+        Ok(())
+        //unimplemented!()
     }
 }
