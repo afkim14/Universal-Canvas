@@ -3,6 +3,7 @@ use self::rgb::*;
 extern crate json;
 use self::json::*;
 
+#[derive(Debug)]
 pub struct Pixel {
     pub id : usize, // id or position
     pub color : RGB8,
@@ -14,7 +15,7 @@ impl Pixel {
         // Default Constructor
         Pixel {
             id,
-            color: RGB8::new(0, 0, 0),
+            color: RGB8::new(0, 0, 0), // default color as black
         }
     }
     pub fn change_color(&mut self, newcolor: RGB8) {
@@ -26,10 +27,17 @@ impl Pixel {
     }
 
     pub fn stringify(&self) -> String {
-        unimplemented!()
+        let json_text = object!{
+            "id" => self.id,
+            "r"  => self.color.r,
+            "g"  => self.color.g,
+            "b"  => self.color.b
+        };
+        json_text.dump()
     }
 }
 
+#[derive(Debug)]
 pub struct Canvas {
     pub pixels : Vec<Pixel> // 2D Vec? Hashmap<pixid, pixel>?
 }
@@ -62,4 +70,39 @@ impl Canvas {
     pub fn stringify(&self) -> String {
         unimplemented!();
     }
+}
+
+
+#[cfg(test)]
+mod test_pixel {
+    use super::*;
+
+    #[test]
+    fn test_change_color() {
+        let mut pixel = Pixel::new(5);
+        pixel.change_color(RGB8::new(5, 6, 7));
+        assert_eq!(pixel.id, 5);
+        assert_eq!((pixel.color.r, pixel.color.g, pixel.color.b), (5, 6, 7));
+    }
+
+    #[test]
+    fn test_stringify_0() {
+        let pixel = Pixel::new(1);
+        let expected = r#"{"id":1,"r":0,"g":0,"b":0}"#;
+        assert_eq!(pixel.stringify(), expected);
+    }
+
+    #[test]
+    fn test_stringify_1() {
+        let mut pixel = Pixel::new(5);
+        pixel.change_color(RGB8::new(5, 6, 7));
+        let expected = r#"{"id":5,"r":5,"g":6,"b":7}"#;
+        assert_eq!(pixel.stringify(), expected);
+    }
+
+    #[test]
+    fn test_from_json() {
+        unimplemented!();
+    }
+
 }
