@@ -1,3 +1,5 @@
+use std::result;
+
 extern crate rgb;
 use self::rgb::*;
 extern crate json;
@@ -5,11 +7,11 @@ use self::json::*;
 extern crate rand;
 use self::rand::*;
 
-#[derive(Debug)]
+
+#[derive(Debug, PartialEq)]
 pub struct Pixel {
     pub id : usize, // id or position
     pub color : RGB8,
-    // pub author : String, // if we want to keep track of who modified the pixel
 }
 
 impl Pixel {
@@ -24,18 +26,40 @@ impl Pixel {
         self.color = newcolor;
     }
 
-    pub fn from_json(json: JsonValue) -> Self {
-        unimplemented!();
+    pub fn from_json(json: JsonValue) -> result::Result<Pixel, String> {
+        let id = &json["id"];
+        let r  = &json["r"];
+        let g  = &json["g"];
+        let b  = &json["b"];
+        if id.is_null() 
+            || r.is_null() 
+            || g.is_null() 
+            || b.is_null() {
+            return Err("Invalid JSON Pixel, field missing: ".to_owned() + &json.dump());
+        } else {
+            // let (rr, gg, bb, idid) : (u8, u8, u8, usize);
+            match (r.as_u8(), g.as_u8(), b.as_u8(), id.as_usize()) {
+                (Some(rr), Some(gg), Some(bb), Some(idid)) => {
+                    let mut p = Pixel::new(idid);
+                    p.change_color(RGB8::new(rr, gg, bb));
+                    Ok(p)
+                }
+                _ => Err("Invalid JSON Pixel, type missmatch:".to_owned() + &json.dump())
+            }
+        }
     }
 
-    pub fn stringify(&self) -> String {
-        let json_text = object!{
+    pub fn jsonfy(&self) -> JsonValue {
+        object!{
             "id" => self.id,
             "r"  => self.color.r,
             "g"  => self.color.g,
             "b"  => self.color.b
-        };
-        json_text.dump()
+        }
+    }
+
+    pub fn stringify(&self) -> String {
+        self.jsonfy().dump()
     }
 }
 
@@ -53,49 +77,73 @@ const REPLY_ENTIRE_BOARD :&str = "REPLY_ENTIRE_BOARD";
 impl Canvas {
     pub fn new(width: usize, height: usize, pixel_size: usize) -> Self {
         // Default Constructor
-        let mut pixels = vec![];
-        for id in 0..width * height {
+        let length = width * height;
+        let mut pixels = Vec::with_capacity(length);
+        for id in 0..length {
             pixels.push(Pixel::new(id));
         }
         Canvas { width, height, pixel_size, pixels }
     }
+
+    pub fn update_pixel(&mut self, pixel: Pixel) {
+        // Given a new pixel update, update the canvas
+        let id = pixel.id;
+        if id >= self.pixels.len(){
+            // Error handling or log 
+            eprint!("Pixel id out of bound: {} >= {}", id, self.pixels.len());
+            return;
+        }
+        self.pixels[id] = pixel;
+    }
+
+
+    // pub fn stringify(&self) -> String {
+    //     let mut pixel_array = JsonValue::new_array();
+    //     for pixel in self.pixels.iter() {
+    //         pixel_array.push(pixel.jsonfy()).expect("Error in creating json file");
+    //     }
+
+    //     let json_text = object!{
+    //         "width"  => self.width,
+    //         "height" => self.height,
+    //         "pixels" => pixel_array
+    //     };
+    //     json_text.dump()
+    // }
+
+    pub fn stringify(&self) -> String {
+        let mut pixels_json = JsonValue::new_array();
+        for p in &self.pixels {
+            pixels_json.push(p.jsonfy()).expect("Error in creating json file");
+        }
+
+        let json_text = object! {
+            "Title"     => REPLY_ENTIRE_BOARD,
+            "Width"     => self.width,
+            "Height"    => self.height,
+            "PixelSize" => self.pixel_size,
+            "Pixels"    => pixels_json
+        };
+
+        json_text.dump()
+    }
+
+    #[allow(dead_code)]
     pub fn new_from_file() -> Self {
         // Build canvas from saved file
         unimplemented!();
     }
-    pub fn update_pixel(pixel: Pixel) {
-        // Given a new pixel update, update the canvas
-        unimplemented!();
-    }
+}
 
-    #[allow(dead_code)]
-    pub fn show_board() {
-        // Print canvas just for testing purposes
-        unimplemented!();
-    }
-
-    pub fn stringify(&self) -> String {
-        // maybe not want to do it this way
-        let mut pixels_json = json::JsonValue::new_array();
-        for p in &self.pixels {
-            pixels_json.push(p.stringify());
-        }
-
-        let json_text = object! {
-            "Title" => REPLY_ENTIRE_BOARD,
-            "Width" => self.width,
-            "Height" => self.height,
-            "PixelSize" => self.pixel_size,
-            "Pixels" => pixels_json
-        };
-
-        json_text.dump()
+impl From<Pixel> for json::JsonValue{
+    fn from(pixel:Pixel) -> JsonValue {
+        pixel.jsonfy()
     }
 }
 
 
 #[cfg(test)]
-mod test_pixel {
+mod test_canvas {
     use super::*;
 
     #[test]
@@ -107,14 +155,14 @@ mod test_pixel {
     }
 
     #[test]
-    fn test_stringify_0() {
+    fn test_pixel_stringify_0() {
         let pixel = Pixel::new(1);
         let expected = r#"{"id":1,"r":0,"g":0,"b":0}"#;
         assert_eq!(pixel.stringify(), expected);
     }
 
     #[test]
-    fn test_stringify_1() {
+    fn test_pixel_stringify_1() {
         let mut pixel = Pixel::new(5);
         pixel.change_color(RGB8::new(5, 6, 7));
         let expected = r#"{"id":5,"r":5,"g":6,"b":7}"#;
@@ -122,8 +170,26 @@ mod test_pixel {
     }
 
     #[test]
-    fn test_from_json() {
-        unimplemented!();
+    fn test_from_json_ok() {
+        let mut pixel = Pixel::new(5);
+        pixel.change_color(RGB8::new(5, 6, 7));
+        let input = json::parse(&pixel.stringify()).unwrap();
+        let parsed_pixel = Pixel::from_json(input).unwrap();
+        assert_eq!(parsed_pixel, pixel);
     }
+
+    // #[test]
+    // fn test_from_json_err() {
+
+    // }
+
+    #[test]
+    fn test_canvas_stringify() {
+        let expected = r#"{"width":2,"height":2,"pixels":[{"id":0,"r":0,"g":0,"b":0},{"id":1,"r":0,"g":0,"b":0},{"id":2,"r":0,"g":0,"b":0},{"id":3,"r":0,"g":0,"b":0}]}"#;
+        let canvas = Canvas::new(2, 2, 4);
+        assert_eq!(canvas.stringify(), expected);
+
+    }
+
 
 }
