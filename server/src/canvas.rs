@@ -78,9 +78,10 @@ impl Canvas {
         // Build canvas from saved file
         unimplemented!();
     }
-    pub fn update_pixel(&mut self, pixel: Pixel) {
+    pub fn update_pixel(&mut self, new_pixel: Pixel) {
         // Given a new pixel update, update the canvas
-        unimplemented!();
+        let id = new_pixel.id;
+        self.pixels[id] = new_pixel;
     }
 
     #[allow(dead_code)]
