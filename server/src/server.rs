@@ -25,7 +25,7 @@ impl WSServer {
             //     Ok(())
             // }
             WSServer {
-                canvas: Canvas::new(125, 125, 10),
+                canvas: Canvas::new(100, 60, 10),
                 out,
             }
         }).unwrap();
@@ -51,7 +51,7 @@ impl WSServer {
 
 // REQUEST CONSTANTS
 const RETRIEVE_BOARD :&str = "RETRIEVE_BOARD";
-const PIXEL_CHANGED: &str = "pixel_changed";
+const PIXEL_CHANGED: &str = "PIXEL_CHANGED";
 
 impl Handler for WSServer {
     fn on_message(&mut self, msg: Message) -> Result<()> {
@@ -62,7 +62,7 @@ impl Handler for WSServer {
                     let canvas_text = self.canvas.stringify();
                     return self.out.send(Message::Text(canvas_text));
                 },
-                _ => {
+                PIXEL_CHANGED => {
                     // TODO: turn RETRIEVE BOARD into a json request so our parsing is consistent
                     // TODO: this is hell nesting. switch to convenience methods later
                     if let Ok(json_data) = json::parse(msg_str) {
@@ -75,6 +75,7 @@ impl Handler for WSServer {
                         }
                     }
                 },
+                _ => {},
             }
         }
         // TODO
