@@ -25,14 +25,7 @@ impl ClientHandler {
     //     // unimplemented!();
     // }
 
-    // sends changes to all clients
-    pub fn send_changes(&mut self) {
-        unimplemented!();
-    }
-
-    pub fn update_canvas(&mut self) {
-        unimplemented!();
-    }
+    
 }
 
 
@@ -42,10 +35,13 @@ impl CanvasServer {
         CanvasServer { canvas }
     }
 
-    pub fn listen(&mut self, host: &str) {
-        ws::listen(host, |out| {
-            self.
-        }).unwrap();
+    // sends changes to all clients
+    pub fn send_changes(&mut self) {
+        unimplemented!();
+    }
+
+    pub fn update_canvas(&mut self) {
+        unimplemented!();
     }
 
 }
@@ -64,12 +60,12 @@ impl Factory for CanvasServer {
     fn client_connected(&mut self, ws: Sender) -> ClientHandler {
         ClientHandler {
             out : ws,
-            is_connected : true,   
+            is_connected : true,
         }
     }
 
     fn connection_lost(&mut self, _: ClientHandler) {
-        // handle 
+        // handle
         unimplemented!();
     }
 }
