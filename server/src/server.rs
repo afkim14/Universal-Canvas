@@ -2,35 +2,21 @@ extern crate ws;
 extern crate json;
 
 use canvas::*;
-use self::ws::{listen, Message, Handler, Result, Sender};
+use self::ws::{listen, Message, Factory, Handler, Result, Sender};
 // use std::result::Result;
 
-pub struct WSServer {
-    canvas: Canvas,
+
+pub struct ClientHandler {
     out: Sender,
+    is_connected: bool,
 }
 
-impl WSServer {
-    // pub fn new(canvas: Canvas) -> Self {
-    //     WSServer { canvas }
-    // }
 
-    pub fn listen() {
-        ws::listen("127.0.0.1:8080", |out| {
-            // move |msg| {
-            //     // out.send(msg)
-            //     // self.handle_message(msg);
-            //     println!("{:?}", msg);
-            //     out.send(msg);
-            //     Ok(())
-            // }
-            WSServer {
-                canvas: Canvas::new(100, 60, 10),
-                out,
-            }
-        }).unwrap();
-    }
+pub struct CanvasServer {
+    canvas:         Canvas,
+}
 
+impl ClientHandler {
     // pub fn handle_message(&mut self, message: Message) {
     //     println!("{:?}", message);
     //     // mutex magic
@@ -49,11 +35,50 @@ impl WSServer {
     }
 }
 
+
+
+impl CanvasServer {
+    pub fn new(canvas: Canvas) -> Self {
+        CanvasServer { canvas }
+    }
+
+    pub fn listen(&mut self, host: &str) {
+        ws::listen(host, |out| {
+            self.
+        }).unwrap();
+    }
+
+}
+
+
+impl Factory for CanvasServer {
+    type Handler = ClientHandler;
+
+    fn connection_made(&mut self, ws: Sender) -> ClientHandler {
+        ClientHandler {
+            out : ws,
+            is_connected : false,
+        }
+    }
+
+    fn client_connected(&mut self, ws: Sender) -> ClientHandler {
+        ClientHandler {
+            out : ws,
+            is_connected : true,   
+        }
+    }
+
+    fn connection_lost(&mut self, _: ClientHandler) {
+        // handle 
+        unimplemented!();
+    }
+}
+
 // REQUEST CONSTANTS
 const RETRIEVE_BOARD :&str = "RETRIEVE_BOARD";
 const PIXEL_CHANGED: &str = "PIXEL_CHANGED";
 
-impl Handler for WSServer {
+impl Handler for ClientHandler {
     fn on_message(&mut self, msg: Message) -> Result<()> {
         if let Ok(msg_str) = msg.as_text() {
             println!("received request: {}", msg_str);
