@@ -1,4 +1,6 @@
 language: rust
+before_install:
+    - cd server
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
