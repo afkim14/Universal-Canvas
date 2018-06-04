@@ -74,6 +74,8 @@ impl Handler for WSServer {
                             }
                         }
                     }
+
+                    // TODO: Update all the other clients
                 },
                 _ => {},
             }
