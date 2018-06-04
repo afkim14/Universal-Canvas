@@ -29,13 +29,12 @@ impl Pixel {
     pub fn from_json(json: &JsonValue) -> Option<Self> {
         // TODO: inconsistent pixel representation on client
         let id = json["id"].as_usize();
-        let color = &json["color"];
-        if id.is_none() || !color.is_object() {
+        if id.is_none(){
             return None;
         }
-        let r = color["r"].as_u8();
-        let g = color["g"].as_u8();
-        let b = color["b"].as_u8();
+        let r = json["r"].as_u8();
+        let g = json["g"].as_u8();
+        let b = json["b"].as_u8();
         if r.is_none() || g.is_none() || b.is_none() {
             return None;
         }
