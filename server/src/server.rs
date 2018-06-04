@@ -6,9 +6,10 @@ use self::ws::{listen, Message, Factory, Handler, Result, Sender};
 // use std::result::Result;
 
 
-pub struct ClientHandler {
+pub struct ClientHandler<'a> {
     out: Sender,
     is_connected: bool,
+    parent : &'a CanvasServer,
 }
 
 
@@ -16,7 +17,7 @@ pub struct CanvasServer {
     canvas:         Canvas,
 }
 
-impl ClientHandler {
+impl<'a> ClientHandler<'a> {
     // pub fn handle_message(&mut self, message: Message) {
     //     println!("{:?}", message);
     //     // mutex magic
@@ -26,13 +27,7 @@ impl ClientHandler {
     // }
 
     // sends changes to all clients
-    pub fn send_changes(&mut self) {
-        unimplemented!();
-    }
 
-    pub fn update_canvas(&mut self) {
-        unimplemented!();
-    }
 }
 
 
@@ -44,20 +39,30 @@ impl CanvasServer {
 
     pub fn listen(&mut self, host: &str) {
         ws::listen(host, |out| {
-            self.
+            self.connection_made(out)
         }).unwrap();
+    }
+
+    pub fn send_changes(&mut self) {
+        unimplemented!();
+    }
+
+    pub fn update_canvas(&mut self) {
+        unimplemented!();
     }
 
 }
 
 
-impl Factory for CanvasServer {
-    type Handler = ClientHandler;
+impl<'a> Factory for CanvasServer {
+
+    type Handler = ClientHandler<'a>;
 
     fn connection_made(&mut self, ws: Sender) -> ClientHandler {
         ClientHandler {
             out : ws,
             is_connected : false,
+            parent : self
         }
     }
 
@@ -65,6 +70,7 @@ impl Factory for CanvasServer {
         ClientHandler {
             out : ws,
             is_connected : true,   
+            parent : self
         }
     }
 
@@ -78,13 +84,13 @@ impl Factory for CanvasServer {
 const RETRIEVE_BOARD :&str = "RETRIEVE_BOARD";
 const PIXEL_CHANGED: &str = "PIXEL_CHANGED";
 
-impl Handler for ClientHandler {
+impl<'a> Handler for ClientHandler<'a> {
     fn on_message(&mut self, msg: Message) -> Result<()> {
         if let Ok(msg_str) = msg.as_text() {
             println!("received request: {}", msg_str);
             match msg_str {
                 RETRIEVE_BOARD => {
-                    let canvas_text = self.canvas.stringify();
+                    let canvas_text = self.parent.canvas.stringify();
                     return self.out.send(Message::Text(canvas_text));
                 },
                 PIXEL_CHANGED => {
@@ -95,7 +101,7 @@ impl Handler for ClientHandler {
                         if new_pixel_json.is_object() {
                             let new_pixel_opt = Pixel::from_json(new_pixel_json);
                             if let Some(new_pixel) = new_pixel_opt {
-                                self.canvas.update_pixel(new_pixel);
+                                self.parent.canvas.update_pixel(new_pixel);
                             }
                         }
                     }
