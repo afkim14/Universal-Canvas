@@ -3,7 +3,7 @@ extern crate json;
 
 use std::sync::{Arc, RwLock};
 use canvas::*;
-use self::ws::{listen, Message, Factory, Handler, Result, Sender};
+use self::ws::{Message, Factory, Handler, Result, Sender};
 // use std::result::Result;
 
 
@@ -36,13 +36,6 @@ impl<'a> ClientHandler {
 impl CanvasServer {
     pub fn new(canvas: Canvas) -> Self {
         CanvasServer { canvas_lock: Arc::new(RwLock::new(canvas)) }
-    }
-
-    pub fn listen(&mut self, host: &str) {
-
-        ws::listen(host, |out| {
-            self.connection_made(out)
-        }).unwrap();
     }
 
     pub fn send_changes(&mut self) {
