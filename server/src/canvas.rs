@@ -1,16 +1,19 @@
-use std::result;
+//! Contains implementation of the Pixel and Canvas structs.
+//!
+//! As a general idea, the Canvas struct contains a vector of pixels, which each have an associated id and color.
 
 extern crate rgb;
 use self::rgb::*;
 extern crate json;
 use self::json::*;
-extern crate rand;
-use self::rand::*;
 
 /// The Pixel struct represents a single pixel (square) on the canvas.
 #[derive(Debug, PartialEq)]
 pub struct Pixel {
-    pub id : usize, // id or position
+    /// The id of the pixel. Useful for updating specific pixels in both the server and client side.
+    pub id : usize,
+
+    /// A `RGB8` object of a simple RGB container.
     pub color : RGB8,
 }
 
@@ -67,10 +70,14 @@ impl Pixel {
 /// It keeps track of the width, height, pixels, and the pixel_size to be used to draw the canvas on the client-side.
 #[derive(Debug)]
 pub struct Canvas {
+    /// Width of the canvas as the number of pixels.
     pub width: usize,
+    /// Height of the canvas as the number of pixels.
     pub height: usize,
-    pub pixel_size: usize,  // size of a pixel when get drawn on client side
-    pub pixels : Vec<Pixel> // emulated 2D vector
+    /// Size of a pixel when drawn on the client side.
+    pub pixel_size: usize,
+    /// Vector of pixels.
+    pub pixels : Vec<Pixel>
 }
 
 // REPLY CONSTANTS
