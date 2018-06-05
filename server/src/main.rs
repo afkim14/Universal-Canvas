@@ -7,9 +7,7 @@ mod server;
 use server::*;
 
 extern crate ws;
-
-use ws::listen;
-
+use ws::WebSocket;
 
 const LOCAL_HOST: &str = "127.0.0.1:8080";
 
@@ -21,7 +19,9 @@ fn main() {
     // }
     let mut canvas = Canvas::new(100, 60, 10);
     let mut server = CanvasServer::new(canvas);
-    server.listen(LOCAL_HOST);
+    let ws = <(WebSocket<CanvasServer>)>::new(server).unwrap();
+    // ws.bind(host).unwrap();
+    ws.listen(LOCAL_HOST).unwrap();
 }
 
 // fn send_canvas_to_clients(canvas: &Canvas) {
