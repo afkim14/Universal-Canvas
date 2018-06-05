@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Canvas","Canvas struct implements the server side's implementation of the canvas. It keeps track of the width, height, pixels, and the pixel_size to be used to draw the canvas on the client-side."],["Pixel","The Pixel struct represents a single pixel (square) on the canvas."]]});
