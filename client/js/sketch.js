@@ -12,7 +12,7 @@ const RETRIEVE_BOARD = "RETRIEVE_BOARD"
 const REPLY_ENTIRE_BOARD = "REPLY_ENTIRE_BOARD";
 const PIXEL_CHANGED = "PIXEL_CHANGED"; // we're going to have to fix the spec for requests from client to server
 
-var socket = new WebSocket("ws://10.105.248.182:8080");
+var socket = new WebSocket("ws://127.0.0.1:8080");
 
 // JQUERY (idk where to put this to make it look clean)
 $(".color_picker").spectrum({

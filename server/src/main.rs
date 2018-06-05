@@ -7,7 +7,7 @@ use server::*;
 extern crate ws;
 use ws::WebSocket;
 
-const LOCAL_HOST: &str = "10.105.248.182:8080";
+const LOCAL_HOST: &str = "127.0.0.1:8080";
 
 fn main() {
     let canvas = Canvas::new(50, 50, 10);
