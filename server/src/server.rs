@@ -5,15 +5,16 @@ use std::sync::{Arc, RwLock};
 use canvas::*;
 use self::ws::{Message, Factory, Handler, Result, Sender};
 
+type SharedCanvas = Arc<RwLock<Canvas>>;
 
 pub struct ClientHandler {
     out: Sender,
-    canvas_lock : Arc<RwLock<Canvas>>,
+    canvas_lock: SharedCanvas,
 }
 
 
 pub struct CanvasServer {
-    canvas_lock: Arc<RwLock<Canvas>>,
+    canvas_lock: SharedCanvas,
 }
 
 
