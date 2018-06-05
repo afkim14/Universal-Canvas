@@ -1,25 +1,47 @@
 extern crate ws;
 extern crate json;
 
-use canvas::*;
-use std::cell::Cell;
 use std::rc::Rc;
-use self::ws::{listen, Message, Handler, Result, Sender};
+use canvas::*;
+use self::ws::{listen, Message, Factory, Handler, Result, Sender};
 // use std::result::Result;
 
-pub struct CanvasServer {
-    canvas: Canvas,
-}
 
 pub struct ClientHandler {
     out: Sender,
-    server: Rc<Cell<CanvasServer>>,
+    is_connected: bool,
+    canvas : Rc<Canvas>,
 }
 
-impl CanvasServer {
+
+pub struct CanvasServer {
+    canvas: Rc<Canvas>,
+}
+
+impl<'a> ClientHandler {
+    // pub fn handle_message(&mut self, message: Message) {
+    //     println!("{:?}", message);
+    //     // mutex magic
+    //     // update_canvas()
+    //     // send()
+    //     // unimplemented!();
+    // }
+
     // sends changes to all clients
+
+}
+
+
+
+impl CanvasServer {
     pub fn new(canvas: Canvas) -> Self {
-        CanvasServer { canvas }
+        CanvasServer { canvas: Rc::new(canvas) }
+    }
+
+    pub fn listen(&mut self, host: &str) {
+        ws::listen(host, |out| {
+            self.connection_made(out)
+        }).unwrap();
     }
 
     pub fn send_changes(&mut self) {
@@ -29,36 +51,33 @@ impl CanvasServer {
     pub fn update_canvas(&mut self) {
         unimplemented!();
     }
+
 }
 
-impl ClientHandler {
-    // pub fn new(canvas: Canvas) -> Self {
-    //     ClientHandler { canvas }
-    // }
 
-    // pub fn listen() {
-    //     ws::listen("127.0.0.1:8080", |out| {
-    //         // move |msg| {
-    //         //     // out.send(msg)
-    //         //     // self.handle_message(msg);
-    //         //     println!("{:?}", msg);
-    //         //     out.send(msg);
-    //         //     Ok(())
-    //         // }
-    //         ClientHandler {
-    //             canvas: Canvas::new(100, 60, 10),
-    //             out,
-    //         }
-    //     }).unwrap();
-    // }
+impl Factory for CanvasServer {
+    type Handler = ClientHandler;
 
-    // pub fn handle_message(&mut self, message: Message) {
-    //     println!("{:?}", message);
-    //     // mutex magic
-    //     // update_canvas()
-    //     // send()
-    //     // unimplemented!();
-    // }
+    fn connection_made(&mut self, ws: Sender) -> ClientHandler {
+        ClientHandler {
+            out : ws,
+            is_connected : false,
+            canvas: self.canvas.clone()
+        }
+    }
+
+    fn client_connected(&mut self, ws: Sender) -> ClientHandler {
+        ClientHandler {
+            out : ws,
+            is_connected : true,
+            canvas: self.canvas.clone()
+        }
+    }
+
+    fn connection_lost(&mut self, _: ClientHandler) {
+        // handle
+        unimplemented!();
+    }
 }
 
 // REQUEST CONSTANTS
@@ -71,7 +90,7 @@ impl Handler for ClientHandler {
             println!("received request: {}", msg_str);
             match msg_str {
                 RETRIEVE_BOARD => {
-                    let canvas_text = self.server.get_mut().canvas.stringify();
+                    let canvas_text = Rc::get_mut(&mut self.canvas).unwrap().stringify();
                     return self.out.send(Message::Text(canvas_text));
                 },
                 PIXEL_CHANGED => {
@@ -82,12 +101,10 @@ impl Handler for ClientHandler {
                         if new_pixel_json.is_object() {
                             let new_pixel_opt = Pixel::from_json(new_pixel_json);
                             if let Some(new_pixel) = new_pixel_opt {
-                                self.server.get_mut().canvas.update_pixel(new_pixel);
+                                Rc::get_mut(&mut self.canvas).unwrap().update_pixel(new_pixel);
                             }
                         }
                     }
-
-                    // TODO: Update all the other clients
                 },
                 _ => {},
             }

@@ -1,3 +1,4 @@
+
 use std::net::{TcpListener};
 
 // User Modules
@@ -12,6 +13,7 @@ use ws::listen;
 
 
 const LOCAL_HOST: &str = "127.0.0.1:8080";
+
 fn main() {
     // let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
     // for stream in listener.incoming() {
@@ -19,11 +21,14 @@ fn main() {
     //     let stream = stream.unwrap();
     // }
     let mut canvas = Canvas::new(100, 60, 10);
-    let server = CanvasServer::new(canvas);
-    let server_rc = Rc::new(Cell::new(server));
-
-    ws::listen(LOCAL_HOST, |out| {
-        ClientHandler { out: out, server: server_rc.clone() }
-    }).unwrap();
-    //server.listen(LOCAL_HOST);
+    let mut server = CanvasServer::new(canvas);
+    server.listen(LOCAL_HOST);
 }
+
+// fn send_canvas_to_clients(canvas: &Canvas) {
+//     unimplemented!();
+// }
+
+// fn update_canvas(pixels: &Vec<Pixel>) {
+//     unimplemented!();
+// }
