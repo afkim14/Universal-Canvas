@@ -29,6 +29,7 @@ pub struct ClientHandler {
 }
 
 /// A struct that contains implementation for behavior associated with the entire server, like creating `ClientHandler` events when a client tries to establish a connection initially.
+#[derive(Debug)]
 pub struct CanvasServer {
     /// A pointer to the shared canvas across the server.
     canvas_lock: SharedCanvas,
