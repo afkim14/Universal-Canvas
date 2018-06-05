@@ -20,7 +20,7 @@ fn main() {
     //     let stream = stream.unwrap();
     // }
     let mut canvas = Canvas::new(100, 60, 10);
-    let server = CanvasServer::new(canvas);
+    let mut server = CanvasServer::new(canvas);
     server.listen(LOCAL_HOST);
 }
 
