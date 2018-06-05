@@ -133,9 +133,39 @@ function keyPressed() {
      currPixelIndex -= CONSTRAINED_CANVAS_HEIGHT / PIXEL_SIZE;
    }
   // UP
-	if (keyCode == 38) { currPixelIndex--; }
+	if (keyCode == 38 && currPixelIndex > 0) {
+     currPixelIndex--;
+   }
   // DOWN
-  if (keyCode == 40) { currPixelIndex++; }
+  if (keyCode == 40 && currPixelIndex < ((CONSTRAINED_CANVAS_WIDTH/PIXEL_SIZE) * (CONSTRAINED_CANVAS_HEIGHT/PIXEL_SIZE))-1) {
+     currPixelIndex++;
+   }
+
+   if (keyCode == 90) {
+     currSelectedColor = { r : 231, g : 76, b : 60 };
+     $(".color_picker").spectrum({
+         color: "#E74C3C",
+         change: function(color) {
+             currSelectedColor = { r: Math.floor(color._r), g: Math.floor(color._g), b: Math.floor(color._b) };
+         }
+     });
+   } else if (keyCode == 88) {
+     currSelectedColor = { r : 52, g : 152, b : 219 };
+     $(".color_picker").spectrum({
+         color: "#3498DB",
+         change: function(color) {
+             currSelectedColor = { r: Math.floor(color._r), g: Math.floor(color._g), b: Math.floor(color._b) };
+         }
+     });
+   } else if (keyCode == 67) {
+     currSelectedColor = { r : 46, g : 204, b : 113 };
+     $(".color_picker").spectrum({
+         color: "#2ECC71",
+         change: function(color) {
+             currSelectedColor = { r: Math.floor(color._r), g: Math.floor(color._g), b: Math.floor(color._b) };
+         }
+     });
+   }
 
   // Spacebar
   if (keyCode == 32) {
