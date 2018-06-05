@@ -1,13 +1,22 @@
+//! |_________| is human nature.
+//! You, and you alone, are responsible for your own actions.
+//! With great power comes great responsibility.
+//! You may choose to use your power to work with others and make something beautiful, or you may choose to use your power for selfish purposes.
+//! Choose wisely.
+
 // User Modules
-mod canvas;
+pub mod canvas;
 use canvas::*;
-mod server;
+pub mod server;
 use server::*;
+
+#[macro_use]
+extern crate json;
 
 extern crate ws;
 use ws::WebSocket;
 
-const LOCAL_HOST: &str = "10.105.248.182:8080";
+const LOCAL_HOST: &str = "127.0.0.1:8080";
 
 fn main() {
     let canvas = Canvas::new(50, 50, 10);
