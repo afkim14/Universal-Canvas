@@ -16,6 +16,8 @@ extern crate json;
 extern crate ws;
 use ws::WebSocket;
 
+#![doc(html_root_url = "https://afkim14.github.io/canvas_finalproject/")]
+
 const LOCAL_HOST: &str = "127.0.0.1:8080";
 
 fn main() {
