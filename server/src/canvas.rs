@@ -32,14 +32,26 @@ impl Pixel {
     }
 
     /// Creates a Pixel object from json.
+    /// The format must look something like:
+    /// ```
+    /// {
+    ///     "id": _,
+    ///     "color": {
+    ///         "r": _,
+    ///         "g": _,
+    ///         "b": _
+    ///     }
+    /// }
+    /// ```
     pub fn from_json(json: &JsonValue) -> Option<Self> {
         let id = json["id"].as_usize();
         if id.is_none(){
             return None;
         }
-        let r = json["color"]["r"].as_u8();
-        let g = json["color"]["g"].as_u8();
-        let b = json["color"]["b"].as_u8();
+        let color = &json["color"];
+        let r = color["r"].as_u8();
+        let g = color["g"].as_u8();
+        let b = color["b"].as_u8();
         if r.is_none() || g.is_none() || b.is_none() {
             return None;
         }
@@ -53,9 +65,11 @@ impl Pixel {
     pub fn jsonfy(&self) -> JsonValue {
         object!{
             "id" => self.id,
-            "r"  => self.color.r,
-            "g"  => self.color.g,
-            "b"  => self.color.b
+            "color" => object!{
+                "r"  => self.color.r,
+                "g"  => self.color.g,
+                "b"  => self.color.b,
+            },
         }
     }
 
@@ -71,13 +85,13 @@ impl Pixel {
 #[derive(Debug)]
 pub struct Canvas {
     /// Width of the canvas as the number of pixels.
-    pub width: usize,
+    width: usize,
     /// Height of the canvas as the number of pixels.
-    pub height: usize,
+    height: usize,
     /// Size of a pixel when drawn on the client side.
-    pub pixel_size: usize,
+    pixel_size: usize,
     /// Vector of pixels.
-    pub pixels : Vec<Pixel>
+    pixels : Vec<Pixel>
 }
 
 // REPLY CONSTANTS
@@ -124,16 +138,11 @@ impl Canvas {
 
         json_text.dump()
     }
-
-    #[allow(dead_code)]
-    pub fn new_from_file() -> Self {
-        // Build canvas from saved file
-        unimplemented!();
-    }
 }
 
-impl From<Pixel> for json::JsonValue{
-    fn from(pixel:Pixel) -> JsonValue {
+impl From<Pixel> for json::JsonValue {
+    /// Convenience initializer that serializes a pixel to a JSON.
+    fn from(pixel: Pixel) -> JsonValue {
         pixel.jsonfy()
     }
 }
@@ -154,7 +163,7 @@ mod test_canvas {
     #[test]
     fn test_pixel_stringify_0() {
         let pixel = Pixel::new(1);
-        let expected = r#"{"id":1,"r":0,"g":0,"b":0}"#;
+        let expected = r#"{"id":1,"color":{"r":0,"g":0,"b":0}}"#;
         assert_eq!(pixel.stringify(), expected);
     }
 
@@ -162,7 +171,7 @@ mod test_canvas {
     fn test_pixel_stringify_1() {
         let mut pixel = Pixel::new(5);
         pixel.change_color(RGB8::new(5, 6, 7));
-        let expected = r#"{"id":5,"r":5,"g":6,"b":7}"#;
+        let expected = r#"{"id":5,"color":{"r":5,"g":6,"b":7}}"#;
         assert_eq!(pixel.stringify(), expected);
     }
 
@@ -175,18 +184,40 @@ mod test_canvas {
         assert_eq!(parsed_pixel, pixel);
     }
 
-    // #[test]
-    // fn test_from_json_err() {
-
-    // }
+    #[test]
+    fn test_from_json_err() {
+        let json = object!{
+            "rust" => "is pretty cool"
+        };
+        assert!(Pixel::from_json(&json).is_none());
+    }
 
     #[test]
     fn test_canvas_stringify() {
-        let expected = r#"{"Title":"REPLY_ENTIRE_BOARD","Width":2,"Height":2,"PixelSize":4,"Pixels":[{"id":0,"r":0,"g":0,"b":0},{"id":1,"r":0,"g":0,"b":0},{"id":2,"r":0,"g":0,"b":0},{"id":3,"r":0,"g":0,"b":0}]}"#;
+        fn pixel_json(id: usize) -> JsonValue {
+            object!{
+                "id" => id,
+                "color" => object!{
+                    "r" => 0,
+                    "g" => 0,
+                    "b" => 0,
+                },
+            }
+        }
+
+        let expected = json::stringify(object!{
+            "title" => REPLY_ENTIRE_BOARD,
+            "width" => 2,
+            "height" => 2,
+            "pixelSize" => 4,
+            "pixels" => array![
+                pixel_json(0),
+                pixel_json(1),
+                pixel_json(2),
+                pixel_json(3)
+            ],
+        });
         let canvas = Canvas::new(2, 2, 4);
         assert_eq!(canvas.stringify(), expected);
-
     }
-
-
 }
