@@ -4,12 +4,10 @@ extern crate json;
 use std::sync::{Arc, RwLock};
 use canvas::*;
 use self::ws::{Message, Factory, Handler, Result, Sender};
-// use std::result::Result;
 
 
 pub struct ClientHandler {
     out: Sender,
-    is_connected: bool,
     canvas_lock : Arc<RwLock<Canvas>>,
 }
 
@@ -18,34 +16,18 @@ pub struct CanvasServer {
     canvas_lock: Arc<RwLock<Canvas>>,
 }
 
-impl<'a> ClientHandler {
-    // pub fn handle_message(&mut self, message: Message) {
-    //     println!("{:?}", message);
-    //     // mutex magic
-    //     // update_canvas()
-    //     // send()
-    //     // unimplemented!();
-    // }
-
-    // sends changes to all clients
-
-}
-
-
 
 impl CanvasServer {
     pub fn new(canvas: Canvas) -> Self {
         CanvasServer { canvas_lock: Arc::new(RwLock::new(canvas)) }
     }
 
-    pub fn send_changes(&mut self) {
-        unimplemented!();
+    fn make_client_handler(&self, ws: Sender) -> ClientHandler {
+        ClientHandler {
+            out: ws,
+            canvas_lock: self.canvas_lock.clone()
+        }
     }
-
-    pub fn update_canvas(&mut self) {
-        unimplemented!();
-    }
-
 }
 
 
@@ -53,24 +35,11 @@ impl Factory for CanvasServer {
     type Handler = ClientHandler;
 
     fn connection_made(&mut self, ws: Sender) -> ClientHandler {
-        ClientHandler {
-            out : ws,
-            is_connected : false,
-            canvas_lock : self.canvas_lock.clone()
-        }
+        self.make_client_handler(ws)
     }
 
     fn client_connected(&mut self, ws: Sender) -> ClientHandler {
-        ClientHandler {
-            out : ws,
-            is_connected : true,
-            canvas_lock : self.canvas_lock.clone()
-        }
-    }
-
-    fn connection_lost(&mut self, _: ClientHandler) {
-        // handle
-        unimplemented!();
+        self.make_client_handler(ws)
     }
 }
 
