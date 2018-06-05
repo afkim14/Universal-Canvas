@@ -1,22 +1,21 @@
 extern crate ws;
 extern crate json;
 
-use std::rc::Rc;
+use std::sync::{Arc, RwLock};
 use canvas::*;
 use self::ws::{listen, Message, Factory, Handler, Result, Sender};
-use std::sync::RwLock;
 // use std::result::Result;
 
 
 pub struct ClientHandler {
     out: Sender,
     is_connected: bool,
-    canvas : Rc<RwLock<Canvas>>,
+    canvas_lock : Arc<RwLock<Canvas>>,
 }
 
 
 pub struct CanvasServer {
-    canvas: Rc<RwLock<Canvas>>,
+    canvas_lock: Arc<RwLock<Canvas>>,
 }
 
 impl<'a> ClientHandler {
@@ -36,10 +35,11 @@ impl<'a> ClientHandler {
 
 impl CanvasServer {
     pub fn new(canvas: Canvas) -> Self {
-        CanvasServer { canvas: Rc::new(RwLock::new(canvas)) }
+        CanvasServer { canvas_lock: Arc::new(RwLock::new(canvas)) }
     }
 
     pub fn listen(&mut self, host: &str) {
+
         ws::listen(host, |out| {
             self.connection_made(out)
         }).unwrap();
@@ -63,15 +63,15 @@ impl Factory for CanvasServer {
         ClientHandler {
             out : ws,
             is_connected : false,
-            canvas: self.canvas.clone()
+            canvas_lock : self.canvas_lock.clone()
         }
     }
 
     fn client_connected(&mut self, ws: Sender) -> ClientHandler {
         ClientHandler {
             out : ws,
-            is_connected : true,
-            canvas: self.canvas.clone()
+            is_connected : true,   
+            canvas_lock : self.canvas_lock.clone()
         }
     }
 
@@ -91,7 +91,8 @@ impl Handler for ClientHandler {
             println!("received request: {}", msg_str);
             match msg_str {
                 RETRIEVE_BOARD => {
-                    let canvas_text = self.canvas.read().unwrap().stringify();
+                    let canvas_r = self.canvas_lock.read().unwrap();
+                    let canvas_text = canvas_r.stringify();
                     return self.out.send(Message::Text(canvas_text));
                 },
                 PIXEL_CHANGED => {
@@ -102,9 +103,8 @@ impl Handler for ClientHandler {
                         if new_pixel_json.is_object() {
                             let new_pixel_opt = Pixel::from_json(new_pixel_json);
                             if let Some(new_pixel) = new_pixel_opt {
-                                // Rc::get_mut(&mut self.canvas).unwrap().update_pixel(new_pixel);
-                                self.canvas.write().unwrap().update_pixel(new_pixel);
-                                return self.out.broadcast("");
+                                let mut canvas_w = self.canvas_lock.write().unwrap();
+                                canvas_w.update_pixel(new_pixel);
                             }
                         }
                     }
