@@ -80,20 +80,23 @@ impl Handler for ClientHandler {
         if let Ok(msg_str) = msg.as_text() {
             if let Ok(json_data) = json::parse(msg_str) {
                 //println!("received request: {}", msg_str);
-                match json_data["title"].as_str().unwrap() {
-                    RETRIEVE_BOARD => {
+                match json_data["title"].as_str() {
+                    Some(RETRIEVE_BOARD) => {
+                        let canvas_text:String;
+                        {
                         let canvas_r = self.canvas_lock.read().unwrap();
-                        let canvas_text = canvas_r.stringify();
+                        canvas_text = canvas_r.stringify();
+                        }
                         return self.out.send(Message::Text(canvas_text));
                     },
-                    PIXEL_CHANGED => {
-                        // TODO: turn RETRIEVE BOARD into a json request so our parsing is consistent
-                        // TODO: this is hell nesting. switch to convenience methods later
+                    Some(PIXEL_CHANGED) => {
                         let new_pixel_json = &json_data["pixel_changed"];
                         let new_pixel_opt = Pixel::from_json(new_pixel_json);
                         if let Some(new_pixel) = new_pixel_opt {
+                            {
                             let mut canvas_w = self.canvas_lock.write().unwrap();
                             canvas_w.update_pixel(new_pixel);
+                            }
                             return self.out.broadcast(msg_str);
                         }
                     },
@@ -101,7 +104,8 @@ impl Handler for ClientHandler {
                 }
             }
         }
-        // TODO
-        Ok(())
+        self.out.send(Message::Text(json::stringify(object!{
+            "error" => "bad request",
+        })))
     }
 }
