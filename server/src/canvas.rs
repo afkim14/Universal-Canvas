@@ -1,5 +1,3 @@
-use std::result;
-
 extern crate rgb;
 use self::rgb::*;
 extern crate json;
