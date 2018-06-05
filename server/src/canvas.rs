@@ -7,7 +7,7 @@ use self::json::*;
 extern crate rand;
 use self::rand::*;
 
-
+/// The Pixel struct represents a single pixel (square) on the canvas.
 #[derive(Debug, PartialEq)]
 pub struct Pixel {
     pub id : usize, // id or position
@@ -15,19 +15,21 @@ pub struct Pixel {
 }
 
 impl Pixel {
+    /// Default Constructor
     pub fn new(id: usize) -> Self {
-        // Default Constructor
         Pixel {
             id,
             color: RGB8::new(0, 0, 0), // default color as black
         }
     }
+
+    /// Changes the color of the pixel.
     pub fn change_color(&mut self, newcolor: RGB8) {
         self.color = newcolor;
     }
 
+    /// Creates a Pixel object from json.
     pub fn from_json(json: &JsonValue) -> Option<Self> {
-        // TODO: inconsistent pixel representation on client
         let id = json["id"].as_usize();
         if id.is_none(){
             return None;
@@ -44,6 +46,7 @@ impl Pixel {
         })
     }
 
+    /// Returns a representation of the Pixel object in JSON.
     pub fn jsonfy(&self) -> JsonValue {
         object!{
             "id" => self.id,
@@ -53,11 +56,15 @@ impl Pixel {
         }
     }
 
+    /// Returns a representation of the Pixel object as a JSON string.
     pub fn stringify(&self) -> String {
         self.jsonfy().dump()
     }
 }
 
+
+/// Canvas struct implements the server side's implementation of the canvas.
+/// It keeps track of the width, height, pixels, and the pixel_size to be used to draw the canvas on the client-side.
 #[derive(Debug)]
 pub struct Canvas {
     pub width: usize,
@@ -70,6 +77,7 @@ pub struct Canvas {
 const REPLY_ENTIRE_BOARD :&str = "REPLY_ENTIRE_BOARD";
 
 impl Canvas {
+    /// Default constructor.
     pub fn new(width: usize, height: usize, pixel_size: usize) -> Self {
         // Default Constructor
         let length = width * height;
@@ -80,6 +88,7 @@ impl Canvas {
         Canvas { width, height, pixel_size, pixels }
     }
 
+    /// Updates a pixel on the canvas to the given pixel.
     pub fn update_pixel(&mut self, pixel: Pixel) {
         // Given a new pixel update, update the canvas
         let id = pixel.id;
@@ -91,21 +100,7 @@ impl Canvas {
         self.pixels[id] = pixel;
     }
 
-
-    // pub fn stringify(&self) -> String {
-    //     let mut pixel_array = JsonValue::new_array();
-    //     for pixel in self.pixels.iter() {
-    //         pixel_array.push(pixel.jsonfy()).expect("Error in creating json file");
-    //     }
-
-    //     let json_text = object!{
-    //         "width"  => self.width,
-    //         "height" => self.height,
-    //         "pixels" => pixel_array
-    //     };
-    //     json_text.dump()
-    // }
-
+    /// Returns the representation of the Canvas as a JSON string.
     pub fn stringify(&self) -> String {
         let mut pixels_json = JsonValue::new_array();
         for p in &self.pixels {

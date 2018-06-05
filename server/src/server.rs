@@ -68,10 +68,10 @@ impl Factory for CanvasServer {
         }
     }
 
-    fn connection_lost(&mut self, _: ClientHandler) {
-        // handle
-        unimplemented!();
-    }
+    // fn connection_lost(&mut self, _: ClientHandler) {
+    //     // handle
+    //     unimplemented!();
+    // }
 }
 
 // REQUEST CONSTANTS
@@ -82,7 +82,7 @@ impl Handler for ClientHandler {
     fn on_message(&mut self, msg: Message) -> Result<()> {
         if let Ok(msg_str) = msg.as_text() {
             if let Ok(json_data) = json::parse(msg_str) {
-                println!("received request: {}", msg_str);
+                //println!("received request: {}", msg_str);
                 match json_data["title"].as_str().unwrap() {
                     RETRIEVE_BOARD => {
                         let canvas_r = self.canvas_lock.read().unwrap();

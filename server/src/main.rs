@@ -18,7 +18,7 @@ fn main() {
     //     println!("new client\n");
     //     let stream = stream.unwrap();
     // }
-    let mut canvas = Canvas::new(100, 60, 10);
+    let mut canvas = Canvas::new(60, 60, 10);
     let mut server = CanvasServer::new(canvas);
     let ws = <(WebSocket<CanvasServer>)>::new(server).unwrap();
     // ws.bind(host).unwrap();
