@@ -165,6 +165,8 @@ function keyPressed() {
              currSelectedColor = { r: Math.floor(color._r), g: Math.floor(color._g), b: Math.floor(color._b) };
          }
      });
+   } else {
+     
    }
 
   // Spacebar
