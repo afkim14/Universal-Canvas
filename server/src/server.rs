@@ -2,6 +2,9 @@
 //!
 //! We follow the paradigm outlined in the `ws` crate, and implement the proper trait methods.
 //! See that crate for more details.
+//!
+//! On a high level, the singleton server owns the shared canvas, and gives a pointer to that shared canvas to client handlers.
+//! Client handlers are created as each client establishes a connection with us.
 
 extern crate ws;
 extern crate json;
@@ -13,6 +16,10 @@ use self::ws::{Message, Factory, Handler, Result, Sender};
 type SharedCanvas = Arc<RwLock<Canvas>>;
 
 /// A struct that contains the implementation for behavior associated with a single client, like when responding to a single client's requests.
+/// For now, all client handlers are created equal because we treat all our clients equally, and so the fields in these objects are all the same.
+/// However, this struct gives room for expansion.
+///
+/// See `CanvasServer::make_client_handler`.
 pub struct ClientHandler {
     /// The `ws` stream associated with the single client.
     out: Sender,
@@ -23,14 +30,12 @@ pub struct ClientHandler {
 
 /// A struct that contains implementation for behavior associated with the entire server, like creating `ClientHandler` events when a client tries to establish a connection initially.
 pub struct CanvasServer {
-
     /// A pointer to the shared canvas across the server.
     canvas_lock: SharedCanvas,
 }
 
 
 impl CanvasServer {
-
     /// Creates a new server object, given a single canvas instance.
     /// The canvas is moved in since there is a shared canvas cross clients.
     pub fn new(canvas: Canvas) -> Self {
