@@ -99,9 +99,9 @@ function create_canvas(json_pixels) {
         for (var j = 0; j < CONSTRAINED_CANVAS_HEIGHT / PIXEL_SIZE; j++) {
             var parsed_json_pixel = json_pixels[currIndex]; // JSON.parse(json_pixels[currIndex]);
             var color = {
-                r : parsed_json_pixel["r"],
-                g : parsed_json_pixel["g"],
-                b : parsed_json_pixel["b"]
+                r : parsed_json_pixel["color"]["r"],
+                g : parsed_json_pixel["color"]["g"],
+                b : parsed_json_pixel["color"]["b"]
             };
             pixels.push(new Pixel(parsed_json_pixel["id"],
                                   i*PIXEL_SIZE,
