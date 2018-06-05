@@ -4,8 +4,6 @@ extern crate rgb;
 use self::rgb::*;
 extern crate json;
 use self::json::*;
-extern crate rand;
-use self::rand::*;
 
 
 #[derive(Debug, PartialEq)]
