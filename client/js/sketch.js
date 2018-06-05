@@ -66,7 +66,7 @@ function handle_socket_connection() {
   // message handlers
   socket.onmessage = function (event) {
     var json = JSON.parse(event.data);
-    console.log(json);
+    //console.log(json);
     if (json["title"] == REPLY_ENTIRE_BOARD) {
         PIXEL_SIZE = json["pixelSize"];
         CONSTRAINED_CANVAS_WIDTH = json["width"] * PIXEL_SIZE;
@@ -122,21 +122,20 @@ function draw_canvas() {
     }
 }
 
-// function show_current_cursor() {
-//     push();
-//     stroke(255);
-//     strokeWeight(4);
-//     fill(0, 0, 0, 0);
-//     rect(currentCursorPos.x, currentCursorPos.y, PIXEL_SIZE, PIXEL_SIZE);
-//     pop();
-// }
 
-// rip indentation???
 function keyPressed() {
-  if (keyCode == 39) { currPixelIndex += CONSTRAINED_CANVAS_HEIGHT / PIXEL_SIZE; } // RIGHT
-  if (keyCode == 37) { currPixelIndex -= CONSTRAINED_CANVAS_HEIGHT / PIXEL_SIZE; } // LEFT
-	if (keyCode == 38) { currPixelIndex--; }                                         // UP
-  if (keyCode == 40) { currPixelIndex++; }                                         // DOWN
+  // RIGHT
+  if (keyCode == 39 && currPixelIndex < (CONSTRAINED_CANVAS_WIDTH/PIXEL_SIZE) * (CONSTRAINED_CANVAS_HEIGHT/PIXEL_SIZE) - (CONSTRAINED_CANVAS_HEIGHT/PIXEL_SIZE)) {
+    currPixelIndex += CONSTRAINED_CANVAS_HEIGHT / PIXEL_SIZE;
+  }
+  // LEFT
+  if (keyCode == 37 && currPixelIndex >= CONSTRAINED_CANVAS_HEIGHT / PIXEL_SIZE) {
+     currPixelIndex -= CONSTRAINED_CANVAS_HEIGHT / PIXEL_SIZE;
+   }
+  // UP
+	if (keyCode == 38) { currPixelIndex--; }
+  // DOWN
+  if (keyCode == 40) { currPixelIndex++; }
 
   // Spacebar
   if (keyCode == 32) {
