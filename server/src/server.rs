@@ -70,7 +70,7 @@ impl Factory for CanvasServer {
     fn client_connected(&mut self, ws: Sender) -> ClientHandler {
         ClientHandler {
             out : ws,
-            is_connected : true,   
+            is_connected : true,
             canvas_lock : self.canvas_lock.clone()
         }
     }
@@ -88,28 +88,27 @@ const PIXEL_CHANGED: &str = "PIXEL_CHANGED";
 impl Handler for ClientHandler {
     fn on_message(&mut self, msg: Message) -> Result<()> {
         if let Ok(msg_str) = msg.as_text() {
-            println!("received request: {}", msg_str);
-            match msg_str {
-                RETRIEVE_BOARD => {
-                    let canvas_r = self.canvas_lock.read().unwrap();
-                    let canvas_text = canvas_r.stringify();
-                    return self.out.send(Message::Text(canvas_text));
-                },
-                PIXEL_CHANGED => {
-                    // TODO: turn RETRIEVE BOARD into a json request so our parsing is consistent
-                    // TODO: this is hell nesting. switch to convenience methods later
-                    if let Ok(json_data) = json::parse(msg_str) {
-                        let new_pixel_json = &json_data[PIXEL_CHANGED];
-                        if new_pixel_json.is_object() {
-                            let new_pixel_opt = Pixel::from_json(new_pixel_json);
-                            if let Some(new_pixel) = new_pixel_opt {
-                                let mut canvas_w = self.canvas_lock.write().unwrap();
-                                canvas_w.update_pixel(new_pixel);
-                            }
+            if let Ok(json_data) = json::parse(msg_str) {
+                println!("received request: {}", msg_str);
+                match json_data["title"].as_str().unwrap() {
+                    RETRIEVE_BOARD => {
+                        let canvas_r = self.canvas_lock.read().unwrap();
+                        let canvas_text = canvas_r.stringify();
+                        return self.out.send(Message::Text(canvas_text));
+                    },
+                    PIXEL_CHANGED => {
+                        // TODO: turn RETRIEVE BOARD into a json request so our parsing is consistent
+                        // TODO: this is hell nesting. switch to convenience methods later
+                        let new_pixel_json = &json_data["pixel_changed"];
+                        let new_pixel_opt = Pixel::from_json(new_pixel_json);
+                        if let Some(new_pixel) = new_pixel_opt {
+                            let mut canvas_w = self.canvas_lock.write().unwrap();
+                            canvas_w.update_pixel(new_pixel);
+                            return self.out.broadcast(msg_str);
                         }
-                    }
-                },
-                _ => {},
+                    },
+                    _ => {},
+                }
             }
         }
         // TODO

@@ -12,7 +12,7 @@ const RETRIEVE_BOARD = "RETRIEVE_BOARD"
 const REPLY_ENTIRE_BOARD = "REPLY_ENTIRE_BOARD";
 const PIXEL_CHANGED = "PIXEL_CHANGED"; // we're going to have to fix the spec for requests from client to server
 
-var socket = new WebSocket("ws://127.0.0.1:8080");
+var socket = new WebSocket("ws://10.105.248.182:8080");
 
 // JQUERY (idk where to put this to make it look clean)
 $(".color_picker").spectrum({
@@ -52,7 +52,10 @@ function handle_socket_connection() {
           function () {
               if (socket.readyState === 1) {
                   console.log("Connection is made")
-                  socket.send(RETRIEVE_BOARD);
+                  var obj = new Object();
+                  obj.title = RETRIEVE_BOARD;
+                  var jsonString= JSON.stringify(obj);
+                  socket.send(jsonString);
                   return;
               } else {
                   console.log("wait for connection...")
@@ -62,14 +65,22 @@ function handle_socket_connection() {
 
   // message handlers
   socket.onmessage = function (event) {
-    var msg = JSON.parse(event.data);
-    if (msg["Title"] == REPLY_ENTIRE_BOARD) {
-        PIXEL_SIZE = msg["PixelSize"];
-        CONSTRAINED_CANVAS_WIDTH = msg["Width"] * PIXEL_SIZE;
-        CONSTRAINED_CANVAS_HEIGHT = msg["Height"] * PIXEL_SIZE;
-        create_canvas(msg["Pixels"]);
+    var json = JSON.parse(event.data);
+    console.log(json);
+    if (json["title"] == REPLY_ENTIRE_BOARD) {
+        PIXEL_SIZE = json["pixelSize"];
+        CONSTRAINED_CANVAS_WIDTH = json["width"] * PIXEL_SIZE;
+        CONSTRAINED_CANVAS_HEIGHT = json["height"] * PIXEL_SIZE;
+        create_canvas(json["pixels"]);
     }
-    // else if (msg["Title"] == .......)
+    else if (json["title"] == PIXEL_CHANGED) {
+      pixels[json["pixel_changed"]["id"]].color = {
+        r : json["pixel_changed"]["color"]["r"],
+        g : json["pixel_changed"]["color"]["g"],
+        b : json["pixel_changed"]["color"]["b"]
+      }
+      draw_canvas();
+    }
   }
 }
 
@@ -130,9 +141,11 @@ function keyPressed() {
   // Spacebar
   if (keyCode == 32) {
       pixels[currPixelIndex].color = currSelectedColor;
-      socket.send(JSON.stringify({
-          pixel_changed: pixels[currPixelIndex]
-      }));
+      var obj = new Object();
+      obj.title = PIXEL_CHANGED;
+      obj.pixel_changed = pixels[currPixelIndex];
+      var jsonString= JSON.stringify(obj);
+      socket.send(jsonString);
   }
 
   draw_canvas();

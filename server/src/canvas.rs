@@ -32,9 +32,9 @@ impl Pixel {
         if id.is_none(){
             return None;
         }
-        let r = json["r"].as_u8();
-        let g = json["g"].as_u8();
-        let b = json["b"].as_u8();
+        let r = json["color"]["r"].as_u8();
+        let g = json["color"]["g"].as_u8();
+        let b = json["color"]["b"].as_u8();
         if r.is_none() || g.is_none() || b.is_none() {
             return None;
         }
@@ -113,11 +113,11 @@ impl Canvas {
         }
 
         let json_text = object! {
-            "Title"     => REPLY_ENTIRE_BOARD,
-            "Width"     => self.width,
-            "Height"    => self.height,
-            "PixelSize" => self.pixel_size,
-            "Pixels"    => pixels_json
+            "title"     => REPLY_ENTIRE_BOARD,
+            "width"     => self.width,
+            "height"    => self.height,
+            "pixelSize" => self.pixel_size,
+            "pixels"    => pixels_json
         };
 
         json_text.dump()
