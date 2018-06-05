@@ -1,3 +1,8 @@
+//! Contains implementation regarding our websocket server.
+//!
+//! We follow the paradigm outlined in the `ws` crate, and implement the proper trait methods.
+//! See that crate for more details.
+
 extern crate ws;
 extern crate json;
 
@@ -7,22 +12,32 @@ use self::ws::{Message, Factory, Handler, Result, Sender};
 
 type SharedCanvas = Arc<RwLock<Canvas>>;
 
+/// A struct that contains the implementation for behavior associated with a single client, like when responding to a single client's requests.
 pub struct ClientHandler {
+    /// The `ws` stream associated with the single client.
     out: Sender,
+
+    /// A pointer to the shared canvas across the server.
     canvas_lock: SharedCanvas,
 }
 
-
+/// A struct that contains implementation for behavior associated with the entire server, like creating `ClientHandler` events when a client tries to establish a connection initially.
 pub struct CanvasServer {
+
+    /// A pointer to the shared canvas across the server.
     canvas_lock: SharedCanvas,
 }
 
 
 impl CanvasServer {
+
+    /// Creates a new server object, given a single canvas instance.
+    /// The canvas is moved in since there is a shared canvas cross clients.
     pub fn new(canvas: Canvas) -> Self {
         CanvasServer { canvas_lock: Arc::new(RwLock::new(canvas)) }
     }
 
+    /// Makes a default `ClientHandler` object.
     fn make_client_handler(&self, ws: Sender) -> ClientHandler {
         ClientHandler {
             out: ws,
@@ -36,16 +51,22 @@ impl Factory for CanvasServer {
     type Handler = ClientHandler;
 
     fn connection_made(&mut self, ws: Sender) -> ClientHandler {
+        // Returns default handler.
         self.make_client_handler(ws)
     }
 
     fn client_connected(&mut self, ws: Sender) -> ClientHandler {
+        // Returns default handler.
         self.make_client_handler(ws)
     }
 }
 
 // REQUEST CONSTANTS
+
+/// The expected key when clients ask for the entire board initially.
 const RETRIEVE_BOARD :&str = "RETRIEVE_BOARD";
+
+/// The expected key when clients change a single pixel.
 const PIXEL_CHANGED: &str = "PIXEL_CHANGED";
 
 impl Handler for ClientHandler {
