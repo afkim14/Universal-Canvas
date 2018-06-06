@@ -11,5 +11,5 @@ pub trait Universe<A>: AsJson {
 }
 
 pub trait Atom: AsJson + FromJson {
-    fn id(&self) -> &usize;
+    // fn id(&self) -> &usize;
 }

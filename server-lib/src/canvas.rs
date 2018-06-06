@@ -120,3 +120,5 @@ impl FromJson for Pixel {
         })
     }
 }
+
+impl Atom for Pixel {}
