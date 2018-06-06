@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["canvas","Contains implementation for a shared canvas. Interfaces with the `sharing_is_caring` model, where the canvas is the universe, and each pixel is an atom."],["responder","Contains implementation for responding to client requests."]]});

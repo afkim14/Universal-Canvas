@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Server` struct in crate `sharing_is_caring`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Server">
+
+    <title>sharing_is_caring::server::Server - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
+    <script src="../../storage.js"></script>
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
+        
+        <p class='location'>Struct Server</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.as_client_handler">as_client_handler</a><a href="#method.listen">listen</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Factory">Factory</a></div><a class="sidebar-title" href="#synthetic-implementations">Auto Trait Implementations</a><div class="sidebar-links"><a href="#impl-Send">!Send</a><a href="#impl-Sync">!Sync</a></div></div><p class='location'><a href='../index.html'>sharing_is_caring</a>::<wbr><a href='index.html'>server</a></p><script>window.sidebarCurrent = {name: 'Server', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
+    </nav>
+
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>sharing_is_caring</a>::<wbr><a href='index.html'>server</a>::<wbr><a class="struct" href=''>Server</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/sharing_is_caring/server.rs.html#31-37' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust struct'>pub struct Server&lt;U, A, R&gt; { /* fields omitted */ }</pre></div><div class='docblock'><p>The server object that defines behavior during the lifetime of our program.</p>
+</div>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl&lt;U:&nbsp;<a class="trait" href="../../sharing_is_caring/universe/trait.Universe.html" title="trait sharing_is_caring::universe::Universe">Universe</a>&lt;A&gt;, A:&nbsp;<a class="trait" href="../../sharing_is_caring/universe/trait.Atom.html" title="trait sharing_is_caring::universe::Atom">Atom</a>, R:&nbsp;<a class="trait" href="../../sharing_is_caring/server/trait.Responder.html" title="trait sharing_is_caring::server::Responder">Responder</a>&lt;U&gt;&gt; <a class="struct" href="../../sharing_is_caring/server/struct.Server.html" title="struct sharing_is_caring::server::Server">Server</a>&lt;U, A, R&gt;</code><a href='#impl' class='anchor'></a></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/sharing_is_caring/server.rs.html#39-64' title='goto source code'>[src]</a></span></td></tr></tbody></table></h3><div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><table class='table-display'><tbody><tr><td><code>pub fn <a href='#method.new' class='fnname'>new</a>(universe: U, responder: R) -&gt; Self</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/sharing_is_caring/server.rs.html#41-47' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Creates a new server with the given universe, name of our server, and a function to generate a response whenever we receive a request.</p>
+</div><h4 id='method.as_client_handler' class="method"><span id='as_client_handler.v' class='invisible'><table class='table-display'><tbody><tr><td><code>pub fn <a href='#method.as_client_handler' class='fnname'>as_client_handler</a>(&amp;self, out: Sender) -&gt; <a class="struct" href="../../sharing_is_caring/server/struct.ClientHandler.html" title="struct sharing_is_caring::server::ClientHandler">ClientHandler</a>&lt;U, A, R&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/sharing_is_caring/server.rs.html#50-57' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Creates a <code>ClientHandler</code> instance from the object.</p>
+</div><h4 id='method.listen' class="method"><span id='listen.v' class='invisible'><table class='table-display'><tbody><tr><td><code>pub fn <a href='#method.listen' class='fnname'>listen</a>(self, host: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; Result&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/sharing_is_caring/server.rs.html#59-63' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4></div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+            <div id='implementations-list'>
+        <h3 id='impl-Factory' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl&lt;U:&nbsp;<a class="trait" href="../../sharing_is_caring/universe/trait.Universe.html" title="trait sharing_is_caring::universe::Universe">Universe</a>&lt;A&gt;, A:&nbsp;<a class="trait" href="../../sharing_is_caring/universe/trait.Atom.html" title="trait sharing_is_caring::universe::Atom">Atom</a>, R:&nbsp;<a class="trait" href="../../sharing_is_caring/server/trait.Responder.html" title="trait sharing_is_caring::server::Responder">Responder</a>&lt;U&gt;&gt; Factory for <a class="struct" href="../../sharing_is_caring/server/struct.Server.html" title="struct sharing_is_caring::server::Server">Server</a>&lt;U, A, R&gt;</code><a href='#impl-Factory' class='anchor'></a></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/sharing_is_caring/server.rs.html#66-76' title='goto source code'>[src]</a></span></td></tr></tbody></table></h3><div class='impl-items'><h4 id='associatedtype.Handler' class="type"><span id='Handler.t' class='invisible'><code>type <a href='#associatedtype.Handler' class="type">Handler</a> = <a class="struct" href="../../sharing_is_caring/server/struct.ClientHandler.html" title="struct sharing_is_caring::server::ClientHandler">ClientHandler</a>&lt;U, A, R&gt;</code></span></h4>
+<h4 id='method.connection_made' class="method"><span id='connection_made.v' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.connection_made' class='fnname'>connection_made</a>(&amp;mut self, out: Sender) -&gt; Self::Handler</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/sharing_is_caring/server.rs.html#69-71' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Called when a TCP connection is made.</p>
+</div><h4 id='method.client_connected' class="method"><span id='client_connected.v' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.client_connected' class='fnname'>client_connected</a>(&amp;mut self, out: Sender) -&gt; Self::Handler</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/sharing_is_caring/server.rs.html#73-75' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Called when a new connection is established for a client endpoint. This method can be used to differentiate a client aspect for a handler. <a href="#method.client_connected">Read more</a></p>
+</div><h4 id='method.on_shutdown' class="method"><span id='on_shutdown.v' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.on_shutdown' class='fnname'>on_shutdown</a>(&amp;mut self)</code></td><td></td></tr></tbody></table></span></h4><div class='docblock'><p>Called when the WebSocket is shutting down.</p>
+</div><h4 id='method.server_connected' class="method"><span id='server_connected.v' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.server_connected' class='fnname'>server_connected</a>(&amp;mut self, ws: Sender) -&gt; Self::Handler</code></td><td></td></tr></tbody></table></span></h4><div class='docblock'><p>Called when a new connection is established for a server endpoint. This method can be used to differentiate a server aspect for a handler. <a href="#method.server_connected">Read more</a></p>
+</div><h4 id='method.connection_lost' class="method"><span id='connection_lost.v' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.connection_lost' class='fnname'>connection_lost</a>(&amp;mut self, Self::Handler)</code></td><td></td></tr></tbody></table></span></h4><div class='docblock'><p>Called when a TCP connection is lost with the handler that was setup for that connection. <a href="#method.connection_lost">Read more</a></p>
+</div></div></div>
+                <h2 id='synthetic-implementations' class='small-section-header'>
+                  Auto Trait Implementations<a href='#synthetic-implementations' class='anchor'></a>
+                </h2>
+                <div id='synthetic-implementations-list'>
+            <h3 id='impl-Send' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl&lt;U, A, R&gt; !<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> for <a class="struct" href="../../sharing_is_caring/server/struct.Server.html" title="struct sharing_is_caring::server::Server">Server</a>&lt;U, A, R&gt;</code><a href='#impl-Send' class='anchor'></a></span></td><td><span class='out-of-band'></span></td></tr></tbody></table></h3><div class='impl-items'></div><h3 id='impl-Sync' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl&lt;U, A, R&gt; !<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sync.html" title="trait core::marker::Sync">Sync</a> for <a class="struct" href="../../sharing_is_caring/server/struct.Server.html" title="struct sharing_is_caring::server::Server">Server</a>&lt;U, A, R&gt;</code><a href='#impl-Sync' class='anchor'></a></span></td><td><span class='out-of-band'></span></td></tr></tbody></table></h3><div class='impl-items'></div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt><kbd>?</kbd></dt>
+                    <dd>Show this help dialog</dd>
+                    <dt><kbd>S</kbd></dt>
+                    <dd>Focus the search field</dd>
+                    <dt><kbd>↑</kbd></dt>
+                    <dd>Move up in search results</dd>
+                    <dt><kbd>↓</kbd></dt>
+                    <dd>Move down in search results</dd>
+                    <dt><kbd>↹</kbd></dt>
+                    <dd>Switch tab</dd>
+                    <dt><kbd>&#9166;</kbd></dt>
+                    <dd>Go to active search result</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "sharing_is_caring";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

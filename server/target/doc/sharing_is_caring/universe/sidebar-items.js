@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Atom","Trait for objects that represent atoms in this model. For now, it just means we can convert to and from JSONs, but future extensions are possible."],["Universe","Trait for objects that represent a universe in our model."]]});

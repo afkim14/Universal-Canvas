@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CanvasResponder","An empty struct that implements the trait methods for our canvas server."]]});

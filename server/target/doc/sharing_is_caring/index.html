@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `sharing_is_caring` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, sharing_is_caring">
+
+    <title>sharing_is_caring - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
+    <script src="../storage.js"></script>
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
+        
+        <p class='location'>Crate sharing_is_caring</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#enums">Enums</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'sharing_is_caring', ty: 'mod', relpath: '../'};</script></div>
+    </nav>
+
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>sharing_is_caring</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/sharing_is_caring/lib.rs.html#1-66' title='goto source code'>[src]</a></span></h1><div class='docblock'><p><code>sharing_is_caring</code> is a generic libary for writing WebSocket servers with an environment shared across multiple web clients.
+Applications include a shared &quot;canvas&quot; where users can paint on, or a shared text document where users can edit lines.</p>
+<h1 id="core-concepts" class="section-header"><a href="#core-concepts">Core Concepts</a></h1>
+<p>A universe represents the shared universe that the users interact with.</p>
+<p>An atom represents a small part of a universe.
+For instance, in a shared universe of a canvas, with a grid of pixels, the atoms would be the pixels.</p>
+<p>See <code>universe</code> for more details.</p>
+<p>The idea is that users of this library can implement the traits in <code>universe</code>, which our pre-built <code>server</code> code can interface with, and then we can easily launch a WebSocket server for that universe.
+Our server implementation already interfaces with the <code>ws</code> crate, so we can launch a server with that crate.</p>
+<h1 id="sample-code" class="section-header"><a href="#sample-code">Sample Code</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">struct</span> <span class="ident">Pixel</span> { ... }
+<span class="kw">impl</span> <span class="ident">Atom</span> <span class="kw">for</span> <span class="ident">Pixel</span> { ... }
+
+<span class="kw">struct</span> <span class="ident">Canvas</span> { ... }
+<span class="kw">impl</span> <span class="ident">Universe</span><span class="op">&lt;</span><span class="ident">Pixel</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Canvas</span> { ... } <span class="comment">// A canvas is a universe of pixels.</span>
+
+<span class="kw">struct</span> <span class="ident">CanvasResponder</span>; <span class="comment">// A zero-sized struct is fine.</span>
+<span class="kw">impl</span> <span class="ident">Responder</span><span class="op">&lt;</span><span class="ident">Canvas</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CanvasResponder</span> { ... } <span class="comment">// Define the canvas&#39;s response behavior.</span>
+
+<span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">let</span> <span class="ident">canvas</span> <span class="op">=</span> <span class="ident">Canvas</span>::<span class="ident">new</span>(<span class="number">50</span>, <span class="number">50</span>, <span class="number">50</span>);
+    <span class="kw">let</span> <span class="ident">responder</span> <span class="op">=</span> <span class="ident">CanvasResponder</span>;
+    <span class="kw">let</span> <span class="ident">server</span> <span class="op">=</span> <span class="ident">Server</span>::<span class="ident">new</span>(<span class="ident">canvas</span>, <span class="ident">responder</span>);
+    <span class="comment">// Launch a WS server with `server`</span>
+    <span class="ident">server</span>.<span class="ident">listen</span>(<span class="string">&quot;127.0.0.1:8080&quot;</span>).<span class="ident">unwrap</span>();
+}</pre>
+<p>For a shared text document, it might look something like this:</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">struct</span> <span class="ident">Line</span> { ... } <span class="comment">// A line of text in our document.</span>
+<span class="kw">impl</span> <span class="ident">Atom</span> <span class="kw">for</span> <span class="ident">Line</span> { ... }
+
+<span class="kw">struct</span> <span class="ident">Document</span> { ... }
+<span class="kw">impl</span> <span class="ident">Universe</span><span class="op">&lt;</span><span class="ident">Line</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Document</span> { ... } <span class="comment">// A document is a universe of lines.</span>
+
+<span class="kw">struct</span> <span class="ident">DocumentResponder</span>; <span class="comment">// A zero-sized struct is fine.</span>
+<span class="kw">impl</span> <span class="ident">Responder</span><span class="op">&lt;</span><span class="ident">Document</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">DocumentResponder</span> { ... } <span class="comment">// Define the document&#39;s response behavior.</span>
+
+<span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="ident">Document</span>::<span class="ident">new</span>();
+    <span class="kw">let</span> <span class="ident">responder</span> <span class="op">=</span> <span class="ident">DocumentResponder</span>;
+    <span class="kw">let</span> <span class="ident">server</span> <span class="op">=</span> <span class="ident">Server</span>::<span class="ident">new</span>(<span class="ident">document</span>, <span class="ident">responder</span>);
+    <span class="comment">// Launch a WS server with `server`</span>
+    <span class="ident">server</span>.<span class="ident">listen</span>(<span class="string">&quot;127.0.0.1:8080&quot;</span>).<span class="ident">unwrap</span>();
+}</pre>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
+<table><tr><td><code>pub use <a class="mod" href="../sharing_is_caring/server/index.html" title="mod sharing_is_caring::server">server</a>::*;</code></td></tr><tr><td><code>pub use <a class="mod" href="../sharing_is_caring/universe/index.html" title="mod sharing_is_caring::universe">universe</a>::*;</code></td></tr><tr><td><code>pub use <a class="mod" href="../sharing_is_caring/json_convertible/index.html" title="mod sharing_is_caring::json_convertible">json_convertible</a>::*;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="json_convertible/index.html"
+                                  title='mod sharing_is_caring::json_convertible'>json_convertible</a></td>
+                           <td class='docblock-short'>
+                                <p>Traits for objects that are convertible to and from JSON values.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="server/index.html"
+                                  title='mod sharing_is_caring::server'>server</a></td>
+                           <td class='docblock-short'>
+                                <p>Contains implementation for a generic WebSocket server for objects that interface with traits in <code>universe</code>.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="universe/index.html"
+                                  title='mod sharing_is_caring::universe'>universe</a></td>
+                           <td class='docblock-short'>
+                                <p>Contains traits for our universe-atom model.</p>
+
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.JsonValue.html"
+                                  title='enum sharing_is_caring::JsonValue'>JsonValue</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt><kbd>?</kbd></dt>
+                    <dd>Show this help dialog</dd>
+                    <dt><kbd>S</kbd></dt>
+                    <dd>Focus the search field</dd>
+                    <dt><kbd>↑</kbd></dt>
+                    <dd>Move up in search results</dd>
+                    <dt><kbd>↓</kbd></dt>
+                    <dd>Move down in search results</dd>
+                    <dt><kbd>↹</kbd></dt>
+                    <dd>Switch tab</dd>
+                    <dt><kbd>&#9166;</kbd></dt>
+                    <dd>Go to active search result</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "sharing_is_caring";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

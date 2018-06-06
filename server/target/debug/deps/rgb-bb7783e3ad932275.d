@@ -1,0 +1,12 @@
+/home/travis/build/afkim14/rust_canvas_finalproject/server/target/debug/deps/rgb-bb7783e3ad932275.rmeta: /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/lib.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/rgb.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/rgba.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/pixel.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/ops.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/convert/mod.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/convert/tuple.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/alt.rs
+
+/home/travis/build/afkim14/rust_canvas_finalproject/server/target/debug/deps/rgb-bb7783e3ad932275.d: /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/lib.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/rgb.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/rgba.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/pixel.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/ops.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/convert/mod.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/convert/tuple.rs /home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/alt.rs
+
+/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/lib.rs:
+/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/rgb.rs:
+/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/rgba.rs:
+/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/pixel.rs:
+/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/ops.rs:
+/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/convert/mod.rs:
+/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/internal/convert/tuple.rs:
+/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.9/src/alt.rs:
