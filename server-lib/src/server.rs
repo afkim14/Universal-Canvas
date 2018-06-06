@@ -14,7 +14,9 @@ use universe::{Universe, Atom};
 
 pub type SharedUniverse<U> = Arc<RwLock<U>>;
 
+/// A trait for objects that can respond to requests from web clients.
 pub trait Responder<U> {
+    /// Takes the request JSON and a mutable reference to the universe, mutates accordingly, and outputs a response JSON.
     fn respond_to_request(&self, json_request: JsonValue, universe: SharedUniverse<U>) -> JsonValue;
 }
 

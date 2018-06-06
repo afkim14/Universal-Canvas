@@ -17,14 +17,13 @@
 //! struct Canvas { ... }
 //! impl Universe for Canvas { ... }
 //!
+//! struct CanvasResponder;
+//! impl Responder<Canvas> for CanvasResponder { ... }
+//!
 //! // ...
 //!
 //! let canvas = Canvas::new(50, 50, 50);
-//! let responder = |request| {
-//!     // Called each time when a web client sends a JSON request.
-//!     // Take the request JSON object and create a JSON response
-//!     return JsonValue::new();
-//! };
+//! let responder = CanvasResponder;
 //! let server = Server::new(canvas, "Canvas/1.0", responder);
 //! // Launch a WS server with `server`
 //! let ws = <WebSocket<Server>>::new(server).unwrap();
@@ -36,14 +35,13 @@
 //! struct Document { ... }
 //! impl Universe for Document { ... }
 //!
+//! struct DocumentResponder;
+//! impl Responder<Document> for DocumentResponder { ... }
+//!
 //! // ...
 //!
 //! let canvas = Document::new(50);
-//! let responder = |request| {
-//!     // Called each time when a web client sends a JSON request.
-//!     // Take the request JSON object and create a JSON response
-//!     return JsonValue::new();
-//! };
+//! let responder = DocumentResponder;
 //! let server = Server::new(canvas, "Canvas/1.0", responder);
 //! // Launch a WS server with `server`
 //! let ws = <WebSocket<Server>>::new(server).unwrap();

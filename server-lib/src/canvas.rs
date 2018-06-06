@@ -52,9 +52,9 @@ impl AsJson for Canvas {
 }
 
 impl Universe<Pixel> for Canvas {
-    fn atom_name_singular(&self) -> &str {
-        "pixel"
-    }
+    // fn atom_name_singular(&self) -> &str {
+    //     "pixel"
+    // }
 
     fn update_atom(&mut self, pixel: Pixel) {
         // Given a new pixel update, update the canvas
