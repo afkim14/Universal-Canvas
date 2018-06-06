@@ -17,7 +17,13 @@ pub type SharedUniverse<U> = Arc<RwLock<U>>;
 /// A trait for objects that can respond to requests from web clients.
 pub trait Responder<U> {
     /// Takes the request JSON and a mutable reference to the universe, mutates accordingly, and outputs a response JSON.
-    fn respond_to_request(&self, json_request: JsonValue, universe: SharedUniverse<U>) -> JsonValue;
+    fn respond_to_request(&self, json_request: JsonValue, universe: SharedUniverse<U>) -> Response;
+}
+
+pub enum Response {
+    None,
+    Reply(JsonValue),
+    Broadcast(JsonValue),
 }
 
 /// The server object that defines behavior during the lifetime of our program.
@@ -90,8 +96,18 @@ impl<'a, U: Universe<A>, A: Atom, R: Responder<U>> Handler for ClientHandler<U, 
             .map(|s| json::parse(s)) {
             Ok(Ok(request_json)) => {
                 let response = self.responder.respond_to_request(request_json, self.universe.clone());
-                let response_str = json::stringify(response);
-                self.out.send(Message::Text(response_str))
+                use self::Response::*;
+                match response {
+                    Reply(reply) => {
+                        let response_str = json::stringify(reply);
+                        self.out.send(Message::Text(response_str))
+                    },
+                    Broadcast(broadcast) => {
+                        let response_str = json::stringify(broadcast);
+                        self.out.broadcast(Message::Text(response_str))
+                    },
+                    _ => Ok(()),
+                }
             },
             _ => self.send_error_message(),
         }

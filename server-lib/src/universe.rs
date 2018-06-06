@@ -1,4 +1,4 @@
-pub use json_convertible::*;
+use json_convertible::*;
 
 pub trait Universe<A>: AsJson {
     // fn atom_name_singular(&self) -> &str; // "pixel"
