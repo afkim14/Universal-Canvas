@@ -51,6 +51,8 @@
 //!     server.listen("127.0.0.1:8080").unwrap();
 //! }
 //! ```
+#![doc(html_root_url = "https://afkim14.github.io/rust_canvas_finalproject/")]
+
 
 #[macro_use]
 extern crate json;
