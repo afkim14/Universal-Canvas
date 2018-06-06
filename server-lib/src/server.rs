@@ -18,13 +18,15 @@ impl<U: Universe<A>, A: Atom> Server<U, A> {
     pub fn new(universe: U) -> Self {
         Server {
             universe: Arc::new(RwLock::new(universe)),
+            atom_phantom: PhantomData,
         }
     }
 
     pub fn as_client_handler(&self, out: Sender) -> ClientHandler<U, A> {
         ClientHandler {
             out,
-            universe: self.universe.clone()
+            universe: self.universe.clone(),
+            atom_phantom: PhantomData,
         }
     }
 }
