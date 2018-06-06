@@ -55,6 +55,12 @@ impl<U: Universe<A>, A: Atom, R: Responder<U>> Server<U, A, R> {
             atom_phantom: PhantomData,
         }
     }
+
+    pub fn listen(self, host: &str) -> ws::Result<()> {
+        let ws = <ws::WebSocket<Server<U, A, R>>>::new(self)?;
+        ws.listen(host)?;
+        Ok(())
+    }
 }
 
 impl<U: Universe<A>, A: Atom, R: Responder<U>> Factory for Server<U, A, R> {

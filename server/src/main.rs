@@ -16,17 +16,18 @@ use self::sharing_is_caring::*;
 #[macro_use]
 extern crate json;
 
-extern crate ws;
-use ws::WebSocket;
+// extern crate ws;
+// use ws::WebSocket;
 
 const LOCAL_HOST: &str = "127.0.0.1:8080";
 
-type CanvasServer = Server<Canvas, Pixel, CanvasResponder>;
+// type CanvasServer = Server<Canvas, Pixel, CanvasResponder>;
 
 fn main() {
     let canvas = Canvas::new(50, 50, 10);
     let responder = CanvasResponder;
     let server = Server::new(canvas, responder);
-    let ws = <WebSocket<CanvasServer>>::new(server).unwrap();
-    ws.listen(LOCAL_HOST).unwrap();
+    // let ws = <WebSocket<CanvasServer>>::new(server).unwrap();
+    // ws.listen(LOCAL_HOST).unwrap();
+    server.listen(LOCAL_HOST).unwrap();
 }
