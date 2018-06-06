@@ -6,3 +6,4 @@ authors = ["Jonathan Chan <jonchanyc@outlook.com>"]
 [dependencies]
 ws = "*"
 json = "*"
+rgb = "*"
