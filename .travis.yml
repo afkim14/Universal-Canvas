@@ -2,7 +2,7 @@ language: rust
 before_install:
     - cd server
 after_success: |
-    cd .. && ./doc.sh
+    ./doc.sh
 deploy:
   provider: pages
   skip-cleanup: true
