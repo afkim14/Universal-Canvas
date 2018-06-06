@@ -12,23 +12,25 @@ use self::json::*;
 
 use universe::{Universe, Atom};
 
-type SharedUniverse<U> = Arc<RwLock<U>>;
+pub type SharedUniverse<U> = Arc<RwLock<U>>;
 
-type SharedResponder = Rc<Fn(JsonValue) -> JsonValue>;
+pub trait Responder<U> {
+    fn respond_to_request(&self, json_request: JsonValue, universe: SharedUniverse<U>) -> JsonValue;
+}
 
 /// The server object that defines behavior during the lifetime of our program.
-pub struct Server<U, A> {
+pub struct Server<U, A, R> {
     universe: SharedUniverse<U>,
     application_name: &'static str,
     /// The function called for every request that we receive from a client.
-    responder: SharedResponder,
+    responder: Rc<R>,
     /// Zero-size data so we can make our generics work.
     atom_phantom: PhantomData<A>,
 }
 
-impl<U: Universe<A>, A: Atom> Server<U, A> {
+impl<U: Universe<A>, A: Atom, R: Responder<U>> Server<U, A, R> {
     /// Creates a new server with the given universe, name of our server, and a function to generate a response whenever we receive a request.
-    pub fn new<R>(universe: U, application_name: &'static str, responder: R) -> Self where R: Fn(JsonValue) -> JsonValue + 'static {
+    pub fn new(universe: U, application_name: &'static str, responder: R) -> Self {
         Server {
             universe: Arc::new(RwLock::new(universe)),
             application_name,
@@ -38,7 +40,7 @@ impl<U: Universe<A>, A: Atom> Server<U, A> {
     }
 
     /// Creates a `ClientHandler` instance from the object.
-    pub fn as_client_handler(&self, out: Sender) -> ClientHandler<U, A> {
+    pub fn as_client_handler(&self, out: Sender) -> ClientHandler<U, A, R> {
         ClientHandler {
             out,
             universe: self.universe.clone(),
@@ -49,8 +51,8 @@ impl<U: Universe<A>, A: Atom> Server<U, A> {
     }
 }
 
-impl<U: Universe<A>, A: Atom> Factory for Server<U, A> {
-    type Handler = ClientHandler<U, A>;
+impl<U: Universe<A>, A: Atom, R: Responder<U>> Factory for Server<U, A, R> {
+    type Handler = ClientHandler<U, A, R>;
 
     fn connection_made(&mut self, out: Sender) -> Self::Handler {
         self.as_client_handler(out)
@@ -66,15 +68,15 @@ impl<U: Universe<A>, A: Atom> Factory for Server<U, A> {
 /// However, this struct gives room for expansion.
 ///
 /// See `Server::as_client_handler`.
-pub struct ClientHandler<U, A> {
+pub struct ClientHandler<U, A, R> {
     out: Sender,
     universe: SharedUniverse<U>,
-    responder: SharedResponder,
+    responder: Rc<R>,
     application_name: &'static str,
     atom_phantom: PhantomData<A>,
 }
 
-impl<'a, U: Universe<A>, A: Atom> ClientHandler<U, A> {
+impl<'a, U: Universe<A>, A: Atom, R: Responder<U>> ClientHandler<U, A, R> {
     fn send_error_message(&self) -> Result<()> {
         let message = object!{
             "application" => self.application_name,
@@ -85,12 +87,12 @@ impl<'a, U: Universe<A>, A: Atom> ClientHandler<U, A> {
     }
 }
 
-impl<'a, U: Universe<A>, A: Atom> Handler for ClientHandler<U, A> {
+impl<'a, U: Universe<A>, A: Atom, R: Responder<U>> Handler for ClientHandler<U, A, R> {
     fn on_message(&mut self, message: Message) -> Result<()> {
         match message.as_text()
             .map(|s| json::parse(s)) {
             Ok(Ok(request_json)) => {
-                let response = (self.responder)(request_json);
+                let response = self.responder.respond_to_request(request_json, self.universe.clone());
                 let response_str = json::stringify(response);
                 self.out.send(Message::Text(response_str))
             },
