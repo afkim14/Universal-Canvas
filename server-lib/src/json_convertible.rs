@@ -1,7 +1,7 @@
 //! Traits for objects that are convertible to and from JSON values.
 
 extern crate json;
-use self::json::JsonValue;
+pub use self::json::JsonValue;
 
 /// Trait for objects representable as a JSON value.
 pub trait AsJson {
