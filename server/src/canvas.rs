@@ -1,3 +1,6 @@
+//! Contains implementation for a shared canvas.
+//! Interfaces with the `sharing_is_caring` model, where the canvas is the universe, and each pixel is an atom.
+
 use std::iter::Iterator;
 
 extern crate rgb;
@@ -8,23 +11,26 @@ use self::json::*;
 extern crate sharing_is_caring;
 use self::sharing_is_caring::*;
 
-// use self::universe::{Universe, Atom};
-
 /// Canvas struct implements the server side's implementation of the canvas.
 /// It keeps track of the width, height, pixels, and the pixel_size to be used to draw the canvas on the client-side.
+/// This is the universe in the `sharing_is_caring` model.
 #[derive(Debug)]
 pub struct Canvas {
     /// Width of the canvas as the number of pixels.
     width: usize,
+
     /// Height of the canvas as the number of pixels.
     height: usize,
+
     /// Size of a pixel when drawn on the client side.
     pixel_size: usize,
+
     /// Vector of pixels.
     pixels : Vec<Pixel>
 }
 
 impl Canvas {
+    /// Default constructor.
     pub fn new(width: usize, height: usize, pixel_size: usize) -> Self {
         let pixels = (0..width * height)
             .map(|id| Pixel::new(id))
@@ -54,10 +60,6 @@ impl AsJson for Canvas {
 }
 
 impl Universe<Pixel> for Canvas {
-    // fn atom_name_singular(&self) -> &str {
-    //     "pixel"
-    // }
-
     fn update_atom(&mut self, pixel: Pixel) {
         // Given a new pixel update, update the canvas
         let id = pixel.id;

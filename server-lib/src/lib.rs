@@ -26,8 +26,7 @@
 //! let responder = CanvasResponder;
 //! let server = Server::new(canvas, responder);
 //! // Launch a WS server with `server`
-//! let ws = <WebSocket<Server>>::new(server).unwrap();
-//! ws.listen("127.0.0.1:8080").unwrap();
+//! server.listen("127.0.0.1:8080").unwrap();
 //! ```
 //!
 //! For a shared text document, it might look something like this:
@@ -44,8 +43,7 @@
 //! let responder = DocumentResponder;
 //! let server = Server::new(document, responder);
 //! // Launch a WS server with `server`
-//! let ws = <WebSocket<Server>>::new(server).unwrap();
-//! ws.listen("127.0.0.1:8080").unwrap();
+//! server.listen("127.0.0.1:8080").unwrap();
 //! ```
 
 #[macro_use]
@@ -60,5 +58,3 @@ pub use universe::*;
 pub use json_convertible::*;
 
 pub use self::json::JsonValue;
-// mod canvas; // TODO
-// mod canvas_server;

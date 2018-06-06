@@ -1,6 +1,7 @@
+//! Contains implementation for responding to client requests.
+
 extern crate sharing_is_caring;
 use self::sharing_is_caring::*;
-// use self::sharing_is_caring::server::*;
 use canvas::{Canvas, Pixel};
 
 // REQUEST CONSTANTS
@@ -15,6 +16,7 @@ const REPLY_ENTIRE_BOARD: &str = "REPLY_ENTIRE_BOARD";
 /// The expected key when clients change a single pixel.
 const PIXEL_CHANGED: &str = "PIXEL_CHANGED";
 
+/// An empty struct that implements the trait methods for our canvas server.
 pub struct CanvasResponder;
 
 impl Responder<Canvas> for CanvasResponder {
@@ -22,12 +24,6 @@ impl Responder<Canvas> for CanvasResponder {
         // println!("Received request {}", json_request);
         match json_request["title"].as_str() {
             Some(RETRIEVE_BOARD) => {
-                // let canvas_string: String;
-                // {
-                //     let canvas = self.universe.read().unwrap();
-                //     canvas_string = canvas_r.stringify();
-                // }
-                // return self.out.send(Message::Text(canvas_text));
                 let canvas = universe.read().unwrap();
                 let mut response = canvas.as_json();
                 response[TITLE_KEY] = JsonValue::String(REPLY_ENTIRE_BOARD.to_owned());
@@ -39,7 +35,6 @@ impl Responder<Canvas> for CanvasResponder {
                 if let Some(new_pixel) = new_pixel_opt {
                     let mut canvas = universe.write().unwrap();
                     canvas.update_atom(new_pixel);
-                    // return self.out.broadcast(msg_str);
                     let mut response = json_request.clone();
                     return Response::Broadcast(response);
                 }
