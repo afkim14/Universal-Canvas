@@ -3,6 +3,9 @@
 //! With great power comes great responsibility.
 //! You may choose to use your power to work with others and make something beautiful, or you may choose to use your power for selfish purposes.
 //! Choose wisely.
+//!
+//! This shared canvas uses the universe-atom model implemented in `sharing_is_caring`.
+//! See that crate for more details.
 
 // User Modules
 pub mod canvas;

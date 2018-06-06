@@ -12,38 +12,44 @@
 //! The idea is that users of this library can implement the traits in `universe`, which our pre-built `server` code can interface with, and then we can easily launch a WebSocket server for that universe.
 //! Our server implementation already interfaces with the `ws` crate, so we can launch a server with that crate.
 //!
-//! # Sample Code (for now)
+//! # Sample Code
 //! ```
+//! struct Pixel { ... }
+//! impl Atom for Pixel { ... }
+//!
 //! struct Canvas { ... }
-//! impl Universe for Canvas { ... }
+//! impl Universe<Pixel> for Canvas { ... } // A canvas is a universe of pixels.
 //!
-//! struct CanvasResponder;
-//! impl Responder<Canvas> for CanvasResponder { ... }
+//! struct CanvasResponder; // A zero-sized struct is fine.
+//! impl Responder<Canvas> for CanvasResponder { ... } // Define the canvas's response behavior.
 //!
-//! // ...
-//!
-//! let canvas = Canvas::new(50, 50, 50);
-//! let responder = CanvasResponder;
-//! let server = Server::new(canvas, responder);
-//! // Launch a WS server with `server`
-//! server.listen("127.0.0.1:8080").unwrap();
+//! fn main() {
+//!     let canvas = Canvas::new(50, 50, 50);
+//!     let responder = CanvasResponder;
+//!     let server = Server::new(canvas, responder);
+//!     // Launch a WS server with `server`
+//!     server.listen("127.0.0.1:8080").unwrap();
+//! }
 //! ```
 //!
 //! For a shared text document, it might look something like this:
 //! ```
+//! struct Line { ... } // A line of text in our document.
+//! impl Atom for Line { ... }
+//!
 //! struct Document { ... }
-//! impl Universe for Document { ... }
+//! impl Universe<Line> for Document { ... } // A document is a universe of lines.
 //!
-//! struct DocumentResponder;
-//! impl Responder<Document> for DocumentResponder { ... }
+//! struct DocumentResponder; // A zero-sized struct is fine.
+//! impl Responder<Document> for DocumentResponder { ... } // Define the document's response behavior.
 //!
-//! // ...
-//!
-//! let document = Document::new(50);
-//! let responder = DocumentResponder;
-//! let server = Server::new(document, responder);
-//! // Launch a WS server with `server`
-//! server.listen("127.0.0.1:8080").unwrap();
+//! fn main() {
+//!     let document = Document::new();
+//!     let responder = DocumentResponder;
+//!     let server = Server::new(document, responder);
+//!     // Launch a WS server with `server`
+//!     server.listen("127.0.0.1:8080").unwrap();
+//! }
 //! ```
 
 #[macro_use]

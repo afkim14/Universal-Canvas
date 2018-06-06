@@ -1,7 +1,7 @@
 [package]
 name = "sharing_is_caring"
 version = "0.1.0"
-authors = ["Jonathan Chan <jonchanyc@outlook.com>"]
+authors = ["Andres Kim <andreskim2018@u.northwestern.edu>", "Frank Wang <jinghangwang2018@u.northwestern.edu>", "Jonathan Chan <jonathanchan@u.northwestern.edu>"]
 
 [dependencies]
 ws = "*"
