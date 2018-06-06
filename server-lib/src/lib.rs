@@ -24,7 +24,7 @@
 //!
 //! let canvas = Canvas::new(50, 50, 50);
 //! let responder = CanvasResponder;
-//! let server = Server::new(canvas, "Canvas/1.0", responder);
+//! let server = Server::new(canvas, responder);
 //! // Launch a WS server with `server`
 //! let ws = <WebSocket<Server>>::new(server).unwrap();
 //! ws.listen("127.0.0.1:8080").unwrap();
@@ -40,9 +40,9 @@
 //!
 //! // ...
 //!
-//! let canvas = Document::new(50);
+//! let document = Document::new(50);
 //! let responder = DocumentResponder;
-//! let server = Server::new(canvas, "Canvas/1.0", responder);
+//! let server = Server::new(document, responder);
 //! // Launch a WS server with `server`
 //! let ws = <WebSocket<Server>>::new(server).unwrap();
 //! ws.listen("127.0.0.1:8080").unwrap();

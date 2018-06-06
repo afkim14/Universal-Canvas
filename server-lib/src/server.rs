@@ -23,7 +23,6 @@ pub trait Responder<U> {
 /// The server object that defines behavior during the lifetime of our program.
 pub struct Server<U, A, R> {
     universe: SharedUniverse<U>,
-    application_name: &'static str,
     /// The function called for every request that we receive from a client.
     responder: Rc<R>,
     /// Zero-size data so we can make our generics work.
@@ -32,10 +31,9 @@ pub struct Server<U, A, R> {
 
 impl<U: Universe<A>, A: Atom, R: Responder<U>> Server<U, A, R> {
     /// Creates a new server with the given universe, name of our server, and a function to generate a response whenever we receive a request.
-    pub fn new(universe: U, application_name: &'static str, responder: R) -> Self {
+    pub fn new(universe: U, responder: R) -> Self {
         Server {
             universe: Arc::new(RwLock::new(universe)),
-            application_name,
             responder: Rc::new(responder),
             atom_phantom: PhantomData,
         }
@@ -47,7 +45,6 @@ impl<U: Universe<A>, A: Atom, R: Responder<U>> Server<U, A, R> {
             out,
             universe: self.universe.clone(),
             responder: self.responder.clone(),
-            application_name: self.application_name,
             atom_phantom: PhantomData,
         }
     }
@@ -74,14 +71,12 @@ pub struct ClientHandler<U, A, R> {
     out: Sender,
     universe: SharedUniverse<U>,
     responder: Rc<R>,
-    application_name: &'static str,
     atom_phantom: PhantomData<A>,
 }
 
 impl<'a, U: Universe<A>, A: Atom, R: Responder<U>> ClientHandler<U, A, R> {
     fn send_error_message(&self) -> Result<()> {
         let message = object!{
-            "application" => self.application_name,
             "error" => "Bad request.",
         };
         let message_str = json::stringify(message);
