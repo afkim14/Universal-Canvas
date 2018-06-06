@@ -1,3 +1,5 @@
+//! Contains implementation for a generic WebSocket server for objects that interface with traits in `universe`.
+
 extern crate ws;
 extern crate json;
 
@@ -12,17 +14,21 @@ use universe::{Universe, Atom};
 
 type SharedUniverse<U> = Arc<RwLock<U>>;
 
-pub type SharedResponder = Rc<Fn(JsonValue) -> JsonValue>;
+type SharedResponder = Rc<Fn(JsonValue) -> JsonValue>;
 
+/// The server object that defines behavior during the lifetime of our program.
 pub struct Server<U, A> {
     universe: SharedUniverse<U>,
     application_name: &'static str,
+    /// The function called for every request that we receive from a client.
     responder: SharedResponder,
+    /// Zero-size data so we can make our generics work.
     atom_phantom: PhantomData<A>,
 }
 
 impl<U: Universe<A>, A: Atom> Server<U, A> {
-    pub fn new<R: 'static>(universe: U, application_name: &'static str, responder: R) -> Self where R: Fn(JsonValue) -> JsonValue {
+    /// Creates a new server with the given universe, name of our server, and a function to generate a response whenever we receive a request.
+    pub fn new<R>(universe: U, application_name: &'static str, responder: R) -> Self where R: Fn(JsonValue) -> JsonValue + 'static {
         Server {
             universe: Arc::new(RwLock::new(universe)),
             application_name,
@@ -31,6 +37,7 @@ impl<U: Universe<A>, A: Atom> Server<U, A> {
         }
     }
 
+    /// Creates a `ClientHandler` instance from the object.
     pub fn as_client_handler(&self, out: Sender) -> ClientHandler<U, A> {
         ClientHandler {
             out,
@@ -54,6 +61,11 @@ impl<U: Universe<A>, A: Atom> Factory for Server<U, A> {
     }
 }
 
+/// A struct that contains the implementation for behavior associated with a single client, like when responding to a single client's requests.
+/// For now, all client handlers are created equal because we treat all our clients equally, and so the fields in these objects are all the same.
+/// However, this struct gives room for expansion.
+///
+/// See `Server::as_client_handler`.
 pub struct ClientHandler<U, A> {
     out: Sender,
     universe: SharedUniverse<U>,

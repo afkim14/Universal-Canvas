@@ -1,9 +1,10 @@
 use json_convertible::*;
 
 pub trait Universe<A>: AsJson {
-    fn atom_name_singular(&self) -> &str; // "pixel"
+    // fn atom_name_singular(&self) -> &str; // "pixel"
     // fn atom_name_plural(&self) -> &str; // "pixels"
 
+    /// Called when we receive a request to update an atom in our universe.
     fn update_atom(&mut self, atom: A);
 
     // fn atom_with_id(&self, id: usize) -> &A;
