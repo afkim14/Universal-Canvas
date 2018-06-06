@@ -20,6 +20,7 @@ pub trait Responder<U> {
     fn respond_to_request(&self, json_request: JsonValue, universe: SharedUniverse<U>) -> Response;
 }
 
+#[derive(Debug)]
 pub enum Response {
     None,
     Reply(JsonValue),
@@ -96,6 +97,7 @@ impl<'a, U: Universe<A>, A: Atom, R: Responder<U>> Handler for ClientHandler<U, 
             .map(|s| json::parse(s)) {
             Ok(Ok(request_json)) => {
                 let response = self.responder.respond_to_request(request_json, self.universe.clone());
+                // println!("Generated response {:?}", response);
                 use self::Response::*;
                 match response {
                     Reply(reply) => {
