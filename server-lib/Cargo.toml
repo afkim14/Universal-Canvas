@@ -1,0 +1,8 @@
+[package]
+name = "sharing_is_caring"
+version = "0.1.0"
+authors = ["Jonathan Chan <jonchanyc@outlook.com>"]
+
+[dependencies]
+ws = "*"
+json = "*"

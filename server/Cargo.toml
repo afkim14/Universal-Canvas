@@ -7,3 +7,4 @@ authors = ["Andres Kim <andreskim2018@u.northwestern.edu>"]
 rgb = "0.8"
 ws = "*"
 json = "*"
+sharing_is_caring = { path = "../server-lib" }
