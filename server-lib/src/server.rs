@@ -36,7 +36,8 @@ pub struct Server<U, A, R> {
     atom_phantom: PhantomData<A>,
 }
 
-impl<U: Universe<A>, A: Atom, R: Responder<U>> Server<U, A, R> {
+impl<U, A, R> Server<U, A, R>
+    where U: Universe<A>, A: Atom, R: Responder<U> {
     /// Creates a new server with the given universe, name of our server, and a function to generate a response whenever we receive a request.
     pub fn new(universe: U, responder: R) -> Self {
         Server {
@@ -63,7 +64,8 @@ impl<U: Universe<A>, A: Atom, R: Responder<U>> Server<U, A, R> {
     }
 }
 
-impl<U: Universe<A>, A: Atom, R: Responder<U>> Factory for Server<U, A, R> {
+impl<U, A, R> Factory for Server<U, A, R>
+    where U: Universe<A>, A: Atom, R: Responder<U> {
     type Handler = ClientHandler<U, A, R>;
 
     fn connection_made(&mut self, out: Sender) -> Self::Handler {
@@ -87,7 +89,8 @@ pub struct ClientHandler<U, A, R> {
     atom_phantom: PhantomData<A>,
 }
 
-impl<'a, U: Universe<A>, A: Atom, R: Responder<U>> ClientHandler<U, A, R> {
+impl<U, A, R> ClientHandler<U, A, R>
+    where U: Universe<A>, A: Atom, R: Responder<U> {
     fn send_error_message(&self) -> Result<()> {
         let message = object!{
             "error" => "Bad request.",
@@ -97,7 +100,8 @@ impl<'a, U: Universe<A>, A: Atom, R: Responder<U>> ClientHandler<U, A, R> {
     }
 }
 
-impl<'a, U: Universe<A>, A: Atom, R: Responder<U>> Handler for ClientHandler<U, A, R> {
+impl<U, A, R> Handler for ClientHandler<U, A, R>
+    where U: Universe<A>, A: Atom, R: Responder<U> {
     fn on_message(&mut self, message: Message) -> Result<()> {
         match message.as_text()
             .map(|s| json::parse(s)) {
